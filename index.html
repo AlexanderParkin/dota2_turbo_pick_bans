@@ -830,13 +830,35 @@ function connectBroker(onReady, idx){
   setTimeout(fallback, 9000);
 }
 function reconnectHard(){
-  if (NET._rh && Date.now() - NET._rh < 30000) return;   // не чаще раза в 30 c
+  if (NET._rh && Date.now() - NET._rh < 25000) return;   // не чаще раза в 25 c
   NET._rh = Date.now();
   try{ NET.client.end(true); }catch(e){}
   connectBroker(()=>{
     if (NET.isHost){ sendLobby(); hostSnap(); }
     else if (!NET.draftInited) netSend({t:"hello"});
   });
+}
+/* Web Worker-«будильник»: Chrome не троттлит воркеры в фоновых вкладках.
+   Каждые 8 с: держим брокер живым трафиком, будим реконнект, шлём снапшот. */
+let kaWorker = null;
+function startKeepaliveWorker(){
+  if (kaWorker) return;
+  try{
+    const blob = new Blob(["setInterval(function(){postMessage(1)},8000)"], {type:"text/javascript"});
+    kaWorker = new Worker(URL.createObjectURL(blob));
+    kaWorker.onmessage = ()=>{
+      if (!NET.online || !NET.client) return;
+      if (NET.client.connected){
+        netSend({t:"ping"});
+        if (NET.isHost && NET.stage !== "lobby") hostSnap();
+      } else {
+        try{ NET.client.reconnect(); }catch(e){}
+      }
+      const silent = Date.now() - NET.lastSeen;
+      if (NET.peerOnline && silent > 60000) reconnectHard();
+      if (NET.peerOnline && silent > 150000){ NET.peerOnline = false; netLost(); }
+    };
+  }catch(e){}
 }
 function startPing(){
   NET.lastSeen = Date.now();
@@ -925,6 +947,7 @@ function netHost(){
   connectBroker(()=>{
     $("lobby-status").textContent = "Комната создана. Ожидание соперника…";
     startPing();
+    startKeepaliveWorker();
     if (NET.snapIv) clearInterval(NET.snapIv);
     NET.snapIv = setInterval(hostSnap, 3000);
   });
@@ -940,6 +963,7 @@ function netJoin(code){
   connectBroker(()=>{
     $("lobby-status").textContent = "Ищем комнату…";
     startPing();
+    startKeepaliveWorker();
     if (NET.retryIv) clearInterval(NET.retryIv);
     NET.retryIv = setInterval(guestLobbyRetry, 2500);
     let tries = 0;
