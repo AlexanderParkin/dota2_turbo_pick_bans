@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dota 2 Turbo — Pick & Bans 7.41d</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f14; --bg2:#0e141b; --panel:#151c25; --panel2:#1b2430; --line:#2a3646;
+  --gold:#c8aa6e; --gold-br:#eccf94; --txt:#cfd8e3; --dim:#7f8ea1;
+  --radiant:#93c53b; --radiant-br:#b8e35f; --dire:#e04a3c; --dire-br:#ff7a6b;
+  --str:#ec5044; --agi:#3fda6c; --int:#40a6ff; --uni:#c98aff;
+  --ban:#8b1e1e;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-user-select:none; user-select:none;}
+html,body{height:100%;}
+body{
+  background:radial-gradient(1200px 600px at 50% -10%, #16202c 0%, var(--bg) 55%) fixed, var(--bg);
+  color:var(--txt);
+  font-family:'Barlow Semi Condensed','Oswald',Arial,sans-serif;
+  overflow-x:hidden; min-height:100%;
+}
+input{user-select:text; -webkit-user-select:text;}
+button{font-family:inherit; cursor:pointer;}
+.hidden{display:none !important;}
+.screen{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px 16px;}
+
+/* ============ SETUP ============ */
+.logo{margin-top:6vh; text-align:center; font-family:'Oswald'; letter-spacing:.35em; font-weight:700;
+  font-size:42px; color:#e8eef5; text-shadow:0 0 24px rgba(200,170,110,.35);}
+.logo .sub{display:block; font-size:15px; letter-spacing:.6em; color:var(--gold); margin-top:6px; font-weight:500;}
+.setup-box{margin-top:4vh; width:min(860px,94vw); display:flex; flex-direction:column; gap:22px;}
+.mode-tabs{display:flex; gap:10px; justify-content:center;}
+.mode-tab{background:var(--panel); border:1px solid var(--line); color:var(--dim); border-radius:4px;
+  font-family:'Oswald'; font-size:14px; letter-spacing:.18em; font-weight:600; padding:9px 22px;
+  text-transform:uppercase; transition:all .15s;}
+.mode-tab:hover{border-color:#3b4b60; color:#cfd8e3;}
+.mode-tab.sel{border-color:var(--gold); color:var(--gold-br); box-shadow:0 0 0 1px var(--gold), 0 0 16px rgba(200,170,110,.22);
+  background:linear-gradient(180deg,#242015,#181510);}
+.mode-desc{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px 18px;
+  font-size:14px; color:#b9c4d2; line-height:1.55; text-align:center; min-height:52px;}
+.mode-desc b{color:#e8eef5;}
+.teams-row{display:flex; gap:18px; justify-content:center; flex-wrap:wrap;}
+.team-input{flex:1 1 280px; max-width:400px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px 16px;}
+.team-input label{display:block; font-size:12px; letter-spacing:.25em; margin-bottom:8px; font-weight:700;}
+.team-input.radiant label{color:var(--radiant);}
+.team-input.dire label{color:var(--dire);}
+.team-input input{width:100%; background:#0d1319; border:1px solid var(--line); color:#e8eef5; font-size:18px;
+  padding:9px 12px; border-radius:4px; font-family:inherit; font-weight:600; letter-spacing:.04em;}
+.team-input input:focus{outline:none; border-color:var(--gold);}
+.rules-note{background:rgba(200,170,110,.06); border:1px solid rgba(200,170,110,.25); border-radius:6px;
+  padding:14px 18px; font-size:14px; color:#b9c4d2; line-height:1.55;}
+.rules-note b{color:var(--gold-br);}
+.btn-main{align-self:center; background:linear-gradient(180deg,#3e9b3a,#2c7a2b); color:#eaffea; border:1px solid #55c14f;
+  font-size:18px; letter-spacing:.2em; font-weight:700; padding:14px 52px; border-radius:4px; text-transform:uppercase;
+  box-shadow:0 0 18px rgba(70,180,60,.35); transition:all .15s;}
+.btn-main:hover:not(:disabled){filter:brightness(1.15);}
+.btn-main:disabled{filter:grayscale(.8) brightness(.6); cursor:not-allowed; box-shadow:none;}
+.btn-gold{background:linear-gradient(180deg,#c8aa6e,#a3823f); border:1px solid #eccf94; color:#1a1408;}
+
+/* ============ COIN ============ */
+#scr-coin{justify-content:center; gap:36px;}
+.coin-stage{perspective:900px; height:220px; display:flex; align-items:center;}
+#coin{width:190px; height:190px; position:relative; transform-style:preserve-3d; transition:transform 2.6s cubic-bezier(.15,.75,.25,1);}
+#coin .face{position:absolute; inset:0; border-radius:50%; backface-visibility:hidden; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px; font-family:'Oswald'; font-weight:700; letter-spacing:.14em;
+  border:6px solid var(--gold); box-shadow:inset 0 0 30px rgba(0,0,0,.6), 0 0 40px rgba(200,170,110,.25);}
+#coin .face img{width:84px; height:84px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));}
+#coin .face.radiant{background:radial-gradient(circle at 35% 30%, #2f4d18, #16260c); color:var(--radiant-br);}
+#coin .face.dire{background:radial-gradient(circle at 35% 30%, #4d1d15, #260d08); color:var(--dire-br); transform:rotateY(180deg);}
+.coin-caption{font-size:20px; letter-spacing:.3em; color:var(--dim); text-transform:uppercase; font-weight:600;}
+#coin-result{text-align:center; display:flex; flex-direction:column; gap:20px; align-items:center;}
+#coin-result .who{font-family:'Oswald'; font-size:30px; letter-spacing:.2em; font-weight:700;}
+
+/* ============ PROTECT ============ */
+#scr-protect{gap:14px;}
+.protect-head{margin-top:8px; text-align:center;}
+.protect-head h2{font-family:'Oswald'; font-size:26px; letter-spacing:.14em; font-weight:600;}
+.protect-head .cnt{margin-top:6px; font-size:16px; color:var(--gold-br); letter-spacing:.1em;}
+.protect-head .hint{margin-top:4px; font-size:13px; color:var(--dim);}
+
+/* ============ COMMON HERO GRID ============ */
+.search-row{display:flex; gap:12px; align-items:center; margin:4px 0 2px;}
+.search-row input{background:#0d1319; border:1px solid var(--line); color:#e8eef5; font-size:15px; padding:8px 14px;
+  border-radius:4px; width:280px; font-family:inherit;}
+.search-row input:focus{outline:none; border-color:var(--gold);}
+.grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; width:min(1720px,99vw); align-items:start;}
+.attr-col{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); border:1px solid #1e2937; border-radius:6px; padding:8px;}
+.attr-head{display:flex; align-items:center; justify-content:center; gap:8px; padding:4px 0 9px;}
+.attr-head img{width:22px; height:22px;}
+.attr-head span{font-family:'Oswald'; font-size:15px; letter-spacing:.22em; font-weight:600;}
+.attr-col[data-a=s] .attr-head span{color:var(--str);}
+.attr-col[data-a=a] .attr-head span{color:var(--agi);}
+.attr-col[data-a=i] .attr-head span{color:var(--int);}
+.attr-col[data-a=u] .attr-head span{color:var(--uni);}
+.hgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(76px,1fr)); gap:5px;}
+.hero{position:relative; aspect-ratio:256/144; border-radius:3px; background-size:cover; background-position:center;
+  border:1px solid #05070a; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease, filter .15s; outline:1px solid rgba(255,255,255,.05);}
+.hero .nm{position:absolute; left:0; right:0; bottom:0; font-size:9px; line-height:1.1; padding:7px 2px 2px; text-align:center;
+  color:#dfe7f0; letter-spacing:.04em; text-transform:uppercase; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.88) 70%); border-radius:0 0 3px 3px; pointer-events:none;}
+.hero:hover{transform:scale(1.42); z-index:30; box-shadow:0 6px 22px rgba(0,0,0,.8), 0 0 0 1px var(--gold);}
+.hero.dimmed{filter:brightness(.13) saturate(.4); pointer-events:none;}
+.hero.dimmed .nm{opacity:.25;}
+.hero.sel{box-shadow:0 0 0 2px var(--gold-br), 0 0 18px rgba(236,207,148,.5); transform:scale(1.18); z-index:20;}
+.hero.banned{filter:grayscale(1) brightness(.32); cursor:default;}
+.hero.banned:hover{transform:none; box-shadow:none;}
+.hero.banned::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(to top right, transparent 46.5%, rgba(220,60,50,.85) 47%, rgba(220,60,50,.85) 53%, transparent 53.5%);}
+.hero.picked{filter:brightness(.28); cursor:default;}
+.hero.picked:hover{transform:none;}
+.hero.picked.by-radiant{box-shadow:inset 0 -3px 0 var(--radiant);}
+.hero.picked.by-dire{box-shadow:inset 0 -3px 0 var(--dire);}
+.hero.prot{outline:2px solid var(--gold); box-shadow:0 0 10px rgba(200,170,110,.45);}
+.hero .shield{position:absolute; top:2px; right:2px; width:15px; height:17px; pointer-events:none;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9));}
+.hero.notpool{display:none;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.hero.shake{animation:shake .35s; box-shadow:0 0 0 2px var(--dire) !important;}
+
+/* ============ DRAFT SCREEN ============ */
+#scr-draft{padding:10px 10px 120px; gap:8px;}
+.topbar{display:grid; grid-template-columns:1fr 300px 1fr; gap:12px; width:min(1720px,99vw); align-items:stretch;}
+.tpanel{background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:6px; padding:10px 12px 12px; transition:box-shadow .3s;}
+.tpanel.active-radiant{box-shadow:0 0 0 1px var(--radiant), 0 0 26px rgba(147,197,59,.28);}
+.tpanel.active-dire{box-shadow:0 0 0 1px var(--dire), 0 0 26px rgba(224,74,60,.28);}
+.tpanel .tname{display:flex; align-items:baseline; gap:10px; margin-bottom:8px;}
+.tpanel.right .tname{justify-content:flex-end;}
+.tpanel .tname b{font-family:'Oswald'; font-size:20px; letter-spacing:.12em; color:#e8eef5; font-weight:600;
+  max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.tpanel .side-tag{font-size:11px; letter-spacing:.3em; font-weight:700;}
+.tpanel.radiant .side-tag{color:var(--radiant);}
+.tpanel.dire .side-tag{color:var(--dire);}
+.tpanel .reserve{font-size:13px; color:var(--dim); letter-spacing:.06em; margin-left:auto;}
+.tpanel.right .reserve{margin-left:0; margin-right:auto;}
+.tpanel .reserve b{color:#e8eef5; font-family:'Oswald'; font-size:15px;}
+.tpanel .reserve.burning b{color:#ff6b5b; text-shadow:0 0 10px rgba(255,80,60,.6); animation:pulse 1s infinite;}
+@keyframes pulse{50%{opacity:.55}}
+.pickrow{display:flex; gap:6px;}
+.tpanel.right .pickrow{flex-direction:row-reverse;}
+.pslot{flex:1 1 0; aspect-ratio:256/144; background:#0a0e13; border:1px solid #232f3f; border-radius:3px; position:relative; overflow:hidden;}
+.tpanel.radiant .pslot{border-top:2px solid rgba(147,197,59,.55);}
+.tpanel.dire .pslot{border-top:2px solid rgba(224,74,60,.55);}
+.pslot img{width:100%; height:100%; object-fit:cover; display:block; animation:slotin .35s ease;}
+@keyframes slotin{from{transform:scale(1.6); opacity:0; filter:brightness(2);} to{transform:scale(1); opacity:1;}}
+.pslot.turn{box-shadow:inset 0 0 0 2px var(--gold); animation:pulse 1.2s infinite;}
+.pslot .pnum{position:absolute; top:2px; left:4px; font-size:10px; color:#4d5d72; font-weight:700;}
+.banrow{display:flex; gap:4px; margin-top:6px; min-height:26px;}
+.tpanel.right .banrow{flex-direction:row-reverse;}
+.bslot{width:46px; aspect-ratio:256/144; background:#0a0e13; border:1px solid #22140f; border-radius:2px; position:relative; overflow:hidden;}
+.bslot img{width:100%; height:100%; object-fit:cover; filter:grayscale(1) brightness(.55);}
+.bslot::after{content:""; position:absolute; inset:0; background:linear-gradient(to top right, transparent 44%, rgba(220,60,50,.9) 46%, rgba(220,60,50,.9) 54%, transparent 56%); opacity:0;}
+.bslot.done::after{opacity:1;}
+.bslot.skip{display:flex; align-items:center; justify-content:center; color:#6b4a3f; font-size:14px; font-weight:800;}
+.bslot.turn{box-shadow:inset 0 0 0 2px var(--gold); animation:pulse 1.2s infinite;}
+
+.center-timer{background:linear-gradient(180deg,#181f29,#10151d); border:1px solid var(--line); border-radius:6px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:8px;}
+.ct-action{font-family:'Oswald'; font-size:17px; letter-spacing:.22em; font-weight:600; text-transform:uppercase;}
+.ct-action.radiant{color:var(--radiant-br);}
+.ct-action.dire{color:var(--dire-br);}
+.ct-time{font-family:'Oswald'; font-size:52px; font-weight:700; line-height:1; color:#f2f6fa; text-shadow:0 0 18px rgba(255,255,255,.15);}
+.ct-time.low{color:#ff5d4d; text-shadow:0 0 20px rgba(255,70,50,.55);}
+.ct-time.reserve-mode{color:#ffb14d; text-shadow:0 0 20px rgba(255,170,60,.5);}
+.ct-phase{font-size:11px; letter-spacing:.28em; color:var(--dim); text-transform:uppercase;}
+.ct-sub{font-size:11px; letter-spacing:.14em; color:#8d6a3f; text-transform:uppercase; min-height:14px;}
+
+.seqbar{display:flex; gap:3px; width:min(1720px,99vw); justify-content:center; flex-wrap:wrap; align-items:flex-end;}
+.seq{position:relative; overflow:hidden; border-radius:3px; display:flex; align-items:center; justify-content:center; font-weight:800; border:1px solid;}
+.seq.pick{width:44px; height:46px; font-size:16px;}
+.seq.ban{width:26px; height:26px; font-size:10px; opacity:.9;}
+.seq.radiant{background:linear-gradient(180deg,#232f12,#131a09); border-color:#4a6420; color:var(--radiant-br); box-shadow:inset 0 -3px 0 var(--radiant);}
+.seq.dire{background:linear-gradient(180deg,#2e140d,#1a0b07); border-color:#6b2a20; color:var(--dire-br); box-shadow:inset 0 -3px 0 var(--dire);}
+.seq.ban.radiant, .seq.ban.dire{filter:saturate(.7) brightness(.85);}
+.seq img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.seq.ban img{filter:grayscale(1) brightness(.5);}
+.seq.cur{box-shadow:0 0 0 2px var(--gold), 0 0 16px rgba(200,170,110,.55); z-index:2; opacity:1; filter:none;}
+.seq .mini-x{position:absolute; inset:0; background:linear-gradient(to top right, transparent 42%, rgba(220,60,50,.9) 46%, rgba(220,60,50,.9) 54%, transparent 58%); z-index:1;}
+.seq-gap{width:14px;}
+.seq-legend{width:100%; display:flex; justify-content:center; gap:24px; font-size:11px; color:#7c8ca1; letter-spacing:.12em; margin-top:3px; text-transform:uppercase;}
+.seq-legend .lg{display:inline-flex; align-items:center; gap:6px;}
+.seq-legend .sq{display:inline-block; border-radius:2px; border:1px solid #4a5568; background:#1a2230;}
+.seq-legend .sq.p{width:16px; height:16px;}
+.seq-legend .sq.b{width:10px; height:10px;}
+
+/* bottom action bar */
+.actionbar{position:fixed; left:0; right:0; bottom:0; background:linear-gradient(180deg, rgba(13,18,25,.6), #0c1117 40%);
+  border-top:1px solid #202b39; backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;
+  gap:18px; padding:10px 14px; z-index:50;}
+.preview{display:flex; align-items:center; gap:14px; min-width:340px;}
+.preview .pimg{width:150px; aspect-ratio:256/144; background:#0a0e13 center/cover; border:1px solid #2a3646; border-radius:4px;}
+.preview .pinfo{display:flex; flex-direction:column; gap:3px;}
+.preview .pname{font-family:'Oswald'; font-size:21px; letter-spacing:.1em; color:#eef3f8; font-weight:600; min-width:170px;}
+.preview .pattr{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--dim); letter-spacing:.15em; text-transform:uppercase;}
+.preview .pattr img{width:16px; height:16px;}
+.btn-lock{font-family:'Oswald'; font-size:19px; letter-spacing:.24em; font-weight:600; text-transform:uppercase;
+  padding:14px 46px; border-radius:4px; border:1px solid transparent; transition:all .15s; min-width:250px;}
+.btn-lock.pick{background:linear-gradient(180deg,#3e9b3a,#2c7a2b); border-color:#55c14f; color:#eaffea; box-shadow:0 0 18px rgba(70,180,60,.35);}
+.btn-lock.ban{background:linear-gradient(180deg,#a5342a,#7c2018); border-color:#d4574a; color:#ffe9e6; box-shadow:0 0 18px rgba(200,60,45,.35);}
+.btn-lock:disabled{filter:grayscale(.85) brightness(.5); cursor:not-allowed; box-shadow:none;}
+.btn-lock:hover:not(:disabled){filter:brightness(1.18);}
+.mini-btns{display:flex; gap:8px;}
+.btn-mini{background:#182130; border:1px solid var(--line); color:#9fb0c3; font-size:13px; padding:9px 14px; border-radius:4px; letter-spacing:.08em;}
+.btn-mini:hover{border-color:var(--gold); color:var(--gold-br);}
+.btn-small{background:none; border:1px solid var(--line); color:#8fa0b5; font-size:12px; padding:7px 18px;
+  border-radius:4px; letter-spacing:.1em; text-transform:uppercase;}
+.btn-small:hover{border-color:var(--gold); color:var(--gold-br);}
+
+/* overlays */
+.overlay{position:fixed; inset:0; background:rgba(5,8,12,.86); z-index:100; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:26px; backdrop-filter:blur(4px);}
+.overlay h2{font-family:'Oswald'; font-size:44px; letter-spacing:.4em; color:#e8eef5; font-weight:700;}
+#toast{position:fixed; bottom:112px; left:50%; transform:translateX(-50%); background:#241318; border:1px solid var(--dire);
+  color:#ffd9d4; padding:10px 22px; border-radius:4px; font-size:15px; letter-spacing:.06em; z-index:200; opacity:0;
+  transition:opacity .25s; pointer-events:none;}
+#toast.show{opacity:1;}
+#toast.goldy{background:#211b0e; border-color:var(--gold); color:#f3e3bd;}
+
+/* review banner (CD) */
+#review-banner{position:fixed; top:0; left:0; right:0; z-index:90; display:flex; align-items:center; justify-content:center; gap:16px;
+  background:linear-gradient(180deg, rgba(200,170,110,.16), rgba(20,15,5,.7)); border-bottom:1px solid var(--gold);
+  padding:12px; font-family:'Oswald'; font-size:20px; letter-spacing:.2em; color:var(--gold-br); text-transform:uppercase;}
+#review-banner b{font-size:30px;}
+
+/* END SCREEN */
+#scr-end .vs-wrap{display:flex; gap:34px; align-items:center;}
+.end-team{display:flex; flex-direction:column; gap:10px; align-items:center;}
+.end-team h3{font-family:'Oswald'; font-size:26px; letter-spacing:.16em; font-weight:600;}
+.end-team.radiant h3{color:var(--radiant-br);}
+.end-team.dire h3{color:var(--dire-br);}
+.end-picks{display:flex; flex-direction:column; gap:6px;}
+.end-picks img{width:210px; border-radius:4px; border:1px solid #2a3646; display:block;}
+.vs-label{font-family:'Oswald'; font-size:52px; color:var(--gold); letter-spacing:.1em; font-weight:700; text-shadow:0 0 26px rgba(200,170,110,.5);}
+.end-note{color:var(--dim); font-size:14px; letter-spacing:.08em;}
+.footer-note{margin-top:14px; font-size:11px; color:#54637a; letter-spacing:.08em; text-align:center; line-height:1.6;}
+/* онлайн */
+.net-row{display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;}
+.net-row input{background:#0d1319; border:1px solid var(--line); color:#e8eef5; font-size:17px; padding:11px 14px;
+  border-radius:4px; width:120px; text-align:center; letter-spacing:.25em; font-family:'Oswald'; text-transform:uppercase;}
+.net-row input:focus{outline:none; border-color:var(--gold);}
+.lobby-mode{margin-top:10px; color:var(--gold-br); font-family:'Oswald'; letter-spacing:.25em; font-size:16px;}
+#lobby-status{color:var(--dim); font-size:14px; letter-spacing:.08em; margin-top:10px; min-height:18px;}
+.seats{display:flex; gap:24px; margin-top:28px; flex-wrap:wrap; justify-content:center;}
+.seat{width:310px; background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--line);
+  border-radius:6px; padding:22px 20px; display:flex; flex-direction:column; gap:12px; align-items:center;}
+.seat.radiant{border-top:3px solid var(--radiant);}
+.seat.dire{border-top:3px solid var(--dire);}
+.seat .side-tag{font-family:'Oswald'; letter-spacing:.32em; font-weight:700; font-size:18px;}
+.seat.radiant .side-tag{color:var(--radiant-br);}
+.seat.dire .side-tag{color:var(--dire-br);}
+.seat-state{color:var(--dim); font-size:15px; letter-spacing:.06em; min-height:20px;}
+.seat input{width:100%; background:#0d1319; border:1px solid var(--line); color:#e8eef5; font-size:16px;
+  padding:9px 10px; border-radius:4px; font-family:inherit; text-align:center; font-weight:600;}
+.seat input:focus{outline:none; border-color:var(--gold);}
+.lobby-hint{margin-top:26px; color:var(--dim); font-size:13px; letter-spacing:.06em; text-align:center; line-height:1.7;}
+@media (max-width:1100px){
+  .grid4{grid-template-columns:repeat(2,1fr);}
+  .topbar{grid-template-columns:1fr; }
+  .center-timer{order:-1;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP ================= -->
+<section id="scr-setup" class="screen">
+  <h1 class="logo">PICK &amp; BANS<span class="sub">DOTA 2 TURBO · ПАТЧ 7.41d</span></h1>
+  <div class="setup-box">
+    <div class="mode-tabs">
+      <button class="mode-tab sel" data-mode="cm">Captains Mode</button>
+      <button class="mode-tab" data-mode="cd">Captains Draft</button>
+    </div>
+    <div class="mode-desc" id="mode-desc"></div>
+    <div class="teams-row">
+      <div class="team-input radiant">
+        <label>СИЛЫ СВЕТА · RADIANT</label>
+        <input id="name-radiant" maxlength="24" value="Radiant" spellcheck="false">
+      </div>
+      <div class="team-input dire">
+        <label>СИЛЫ ТЬМЫ · DIRE</label>
+        <input id="name-dire" maxlength="24" value="Dire" spellcheck="false">
+      </div>
+    </div>
+    <div class="rules-note">
+      <b>Защита от бана:</b> перед драфтом каждая команда открыто выбирает 2 героев, которых <b>нельзя банить</b>
+      (но их может пикнуть любая команда). В Captains Draft защита выбирается из уже сгенерированного пула 28 героев.
+      Кто ходит первым — решает монетка. Если время действия истекло, тратится резервное время; когда и оно закончится —
+      бан пропускается, а пик выбирается случайно (как в игре).
+    </div>
+    <button class="btn-main" id="btn-setup-next">Драфт на этом компьютере</button>
+    <div class="net-row">
+      <button class="btn-main btn-gold" id="btn-net-host">Создать онлайн-комнату</button>
+      <input id="net-code" placeholder="КОД" maxlength="8" spellcheck="false">
+      <button class="btn-main" id="btn-net-join">Войти</button>
+    </div>
+    <div class="footer-note">Онлайн: режим выбирает создатель комнаты, названия команд вводятся при выборе стороны.<br>
+      Изображения и звуки — Valve / Dota 2 (Steam CDN, Dota 2 Wiki). Нужен интернет.</div>
+  </div>
+</section>
+
+<!-- ================= ONLINE LOBBY ================= -->
+<section id="scr-lobby" class="screen hidden">
+  <h1 class="logo" style="margin-top:4vh">ОНЛАЙН-КОМНАТА<span class="sub" id="lobby-code">КОД: —</span></h1>
+  <div class="lobby-mode" id="lobby-mode"></div>
+  <div id="lobby-status">…</div>
+  <div class="seats">
+    <div class="seat radiant">
+      <div class="side-tag">RADIANT</div>
+      <div class="seat-state" id="seat-state-radiant">Свободна</div>
+      <input id="seat-name-radiant" class="hidden" maxlength="24" placeholder="Название команды" spellcheck="false">
+      <button class="btn-main" id="seat-btn-radiant">Занять сторону</button>
+    </div>
+    <div class="seat dire">
+      <div class="side-tag">DIRE</div>
+      <div class="seat-state" id="seat-state-dire">Свободна</div>
+      <input id="seat-name-dire" class="hidden" maxlength="24" placeholder="Название команды" spellcheck="false">
+      <button class="btn-main" id="seat-btn-dire">Занять сторону</button>
+    </div>
+  </div>
+  <div class="lobby-hint">Отправьте код сопернику — он вводит его на главном экране в поле «КОД» и жмёт «Войти».<br>
+    Каждый капитан занимает свободную сторону, вписывает название и жмёт «Готов». Пики и баны — только за свою сторону.</div>
+</section>
+
+<!-- ================= COIN ================= -->
+<section id="scr-coin" class="screen hidden">
+  <h1 class="logo" style="margin-top:4vh">ЖЕРЕБЬЁВКА<span class="sub">ПЕРВЫЙ ХОД</span></h1>
+  <div class="coin-stage">
+    <div id="coin">
+      <div class="face radiant"><img id="coin-img-r" alt="R"><span>RADIANT</span></div>
+      <div class="face dire"><img id="coin-img-d" alt="D"><span>DIRE</span></div>
+    </div>
+  </div>
+  <div class="coin-caption" id="coin-caption">Монета решит, кто ходит первым</div>
+  <button class="btn-main btn-gold" id="btn-flip">Бросить монету</button>
+  <div id="coin-result" class="hidden">
+    <div class="who" id="coin-who"></div>
+    <button class="btn-main" id="btn-coin-next">Продолжить</button>
+  </div>
+</section>
+
+<!-- ================= PROTECT ================= -->
+<section id="scr-protect" class="screen hidden">
+  <div class="protect-head">
+    <h2 id="protect-title"></h2>
+    <div class="cnt" id="protect-cnt">Выбрано: 0 / 2</div>
+    <div class="hint">Эти герои получат золотой щит — банить их запрещено, пикать может любая команда</div>
+  </div>
+  <div class="search-row">
+    <input id="protect-search" placeholder="Поиск героя..." spellcheck="false">
+    <button class="btn-mini" id="protect-clear">Сбросить</button>
+  </div>
+  <div class="grid4" id="protect-grid"></div>
+  <button class="btn-main" id="btn-protect-ok" disabled style="margin-top:10px">Подтвердить</button>
+</section>
+
+<!-- ================= DRAFT ================= -->
+<section id="scr-draft" class="screen hidden">
+  <div id="review-banner" class="hidden">Изучите пул героев — драфт начнётся через&nbsp;<b id="review-sec">15</b></div>
+  <div class="topbar">
+    <div class="tpanel radiant" id="panel-radiant">
+      <div class="tname"><span class="side-tag">RADIANT</span><b id="dr-name-radiant">Radiant</b>
+        <span class="reserve" id="reserve-radiant">Резерв <b>2:10</b></span></div>
+      <div class="pickrow" id="picks-radiant"></div>
+      <div class="banrow" id="bans-radiant"></div>
+    </div>
+    <div class="center-timer">
+      <div class="ct-action" id="ct-action">—</div>
+      <div class="ct-time" id="ct-time">30</div>
+      <div class="ct-sub" id="ct-sub"></div>
+      <div class="ct-phase" id="ct-phase"></div>
+    </div>
+    <div class="tpanel dire right" id="panel-dire">
+      <div class="tname"><span class="reserve" id="reserve-dire">Резерв <b>2:10</b></span>
+        <b id="dr-name-dire">Dire</b><span class="side-tag">DIRE</span></div>
+      <div class="pickrow" id="picks-dire"></div>
+      <div class="banrow" id="bans-dire"></div>
+    </div>
+  </div>
+  <div class="seqbar" id="seqbar"></div>
+  <div class="search-row">
+    <input id="draft-search" placeholder="Поиск героя..." spellcheck="false">
+    <div class="mini-btns">
+      <button class="btn-mini" id="btn-pause">⏸ Пауза</button>
+      <button class="btn-mini" id="btn-sound">🔊 Звук вкл</button>
+    </div>
+  </div>
+  <div class="grid4" id="draft-grid"></div>
+  <div class="actionbar">
+    <div class="preview">
+      <div class="pimg" id="prev-img"></div>
+      <div class="pinfo">
+        <div class="pname" id="prev-name">Выберите героя</div>
+        <div class="pattr" id="prev-attr"></div>
+      </div>
+    </div>
+    <button class="btn-lock pick" id="btn-lock" disabled>ВЫБРАТЬ</button>
+  </div>
+</section>
+
+<!-- ================= END ================= -->
+<div id="scr-end" class="overlay hidden">
+  <h2>ДРАФТ ЗАВЕРШЁН</h2>
+  <div class="vs-wrap">
+    <div class="end-team radiant"><h3 id="end-name-radiant"></h3><div class="end-picks" id="end-picks-radiant"></div></div>
+    <div class="vs-label">VS</div>
+    <div class="end-team dire"><h3 id="end-name-dire"></h3><div class="end-picks" id="end-picks-dire"></div></div>
+  </div>
+  <div class="end-note" id="end-note"></div>
+  <div style="display:flex; gap:14px; align-items:center">
+    <button class="btn-main btn-gold" id="btn-save-img" title="Один клик — картинка пиков. Тройной клик — полная картинка с банами в порядке драфта">Сохранить</button>
+    <button class="btn-main" id="btn-again">Новый драфт</button>
+  </div>
+  <button class="btn-small" id="btn-copy">Скопировать результат текстом</button>
+</div>
+
+<div id="pause-overlay" class="overlay hidden"><h2>ПАУЗА</h2>
+  <button class="btn-main" id="btn-resume">Продолжить</button></div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script>if(!window.Peer)document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>');</script>
+<script>
+/* ================================================================
+   DOTA 2 TURBO PICK/BANS — патч 7.41d
+   Порядок Captains Mode соответствует 7.40+ (Liquipedia):
+   Баны1: A A B B A B B (15с) · Пики1: A B · Баны2: A A B ·
+   Пики2: B A A B B A · Баны3: A B A B · Пики3: A B  (A = первый пик)
+   Резерв: 65с на команду. Тайм-аут: бан пропадает, пик — случайный герой.
+   Captains Draft: пул 28 (7 на атрибут), баны A B A B A B,
+   пики A B B A A B B A A B, банк 45с на капитана.
+   При пике звучит собственная спавн-реплика героя (оригинальная озвучка Dota 2,
+   Dota 2 Wiki). У героев без реплик на вики (Ringmaster, Kez, Largo) — тишина.
+   ================================================================ */
+/* ---------- ДАННЫЕ: 127 героев патча 7.41d (OpenDota, июль 2026) ----------
+   [внутреннее имя для CDN, отображаемое имя, атрибут s/a/i/u] */
+const HEROES = [
+["antimage","Anti-Mage","a"],["axe","Axe","s"],["bane","Bane","u"],["bloodseeker","Bloodseeker","a"],
+["crystal_maiden","Crystal Maiden","i"],["drow_ranger","Drow Ranger","a"],["earthshaker","Earthshaker","s"],
+["juggernaut","Juggernaut","a"],["mirana","Mirana","a"],["morphling","Morphling","a"],["nevermore","Shadow Fiend","a"],
+["phantom_lancer","Phantom Lancer","a"],["puck","Puck","i"],["pudge","Pudge","s"],["razor","Razor","a"],
+["sand_king","Sand King","u"],["storm_spirit","Storm Spirit","i"],["sven","Sven","s"],["tiny","Tiny","s"],
+["vengefulspirit","Vengeful Spirit","a"],["windrunner","Windranger","u"],["zuus","Zeus","i"],["kunkka","Kunkka","s"],
+["lina","Lina","i"],["lion","Lion","i"],["shadow_shaman","Shadow Shaman","i"],["slardar","Slardar","s"],
+["tidehunter","Tidehunter","s"],["witch_doctor","Witch Doctor","i"],["lich","Lich","i"],["riki","Riki","a"],
+["enigma","Enigma","u"],["tinker","Tinker","i"],["sniper","Sniper","a"],["necrolyte","Necrophos","i"],
+["warlock","Warlock","i"],["beastmaster","Beastmaster","u"],["queenofpain","Queen of Pain","i"],
+["venomancer","Venomancer","u"],["faceless_void","Faceless Void","a"],["skeleton_king","Wraith King","s"],
+["death_prophet","Death Prophet","u"],["phantom_assassin","Phantom Assassin","a"],["pugna","Pugna","i"],
+["templar_assassin","Templar Assassin","a"],["viper","Viper","a"],["luna","Luna","a"],["dragon_knight","Dragon Knight","s"],
+["dazzle","Dazzle","u"],["rattletrap","Clockwerk","s"],["leshrac","Leshrac","i"],["furion","Nature's Prophet","u"],
+["life_stealer","Lifestealer","s"],["dark_seer","Dark Seer","i"],["clinkz","Clinkz","a"],["omniknight","Omniknight","s"],
+["enchantress","Enchantress","i"],["huskar","Huskar","s"],["night_stalker","Night Stalker","s"],
+["broodmother","Broodmother","a"],["bounty_hunter","Bounty Hunter","a"],["weaver","Weaver","a"],["jakiro","Jakiro","i"],
+["batrider","Batrider","u"],["chen","Chen","i"],["spectre","Spectre","a"],["ancient_apparition","Ancient Apparition","i"],
+["doom_bringer","Doom","s"],["ursa","Ursa","a"],["spirit_breaker","Spirit Breaker","s"],["gyrocopter","Gyrocopter","a"],
+["alchemist","Alchemist","s"],["invoker","Invoker","i"],["silencer","Silencer","i"],["obsidian_destroyer","Outworld Destroyer","i"],
+["lycan","Lycan","s"],["brewmaster","Brewmaster","u"],["shadow_demon","Shadow Demon","i"],["lone_druid","Lone Druid","a"],
+["chaos_knight","Chaos Knight","s"],["meepo","Meepo","a"],["treant","Treant Protector","s"],["ogre_magi","Ogre Magi","s"],
+["undying","Undying","s"],["rubick","Rubick","i"],["disruptor","Disruptor","i"],["nyx_assassin","Nyx Assassin","u"],
+["naga_siren","Naga Siren","a"],["keeper_of_the_light","Keeper of the Light","i"],["wisp","Io","u"],["visage","Visage","u"],
+["slark","Slark","a"],["medusa","Medusa","a"],["troll_warlord","Troll Warlord","a"],["centaur","Centaur Warrunner","s"],
+["magnataur","Magnus","u"],["shredder","Timbersaw","s"],["bristleback","Bristleback","s"],["tusk","Tusk","s"],
+["skywrath_mage","Skywrath Mage","i"],["abaddon","Abaddon","u"],["elder_titan","Elder Titan","s"],
+["legion_commander","Legion Commander","s"],["techies","Techies","u"],["ember_spirit","Ember Spirit","a"],
+["earth_spirit","Earth Spirit","s"],["abyssal_underlord","Underlord","s"],["terrorblade","Terrorblade","a"],
+["phoenix","Phoenix","s"],["oracle","Oracle","i"],["winter_wyvern","Winter Wyvern","i"],["arc_warden","Arc Warden","u"],
+["monkey_king","Monkey King","a"],["dark_willow","Dark Willow","i"],["pangolier","Pangolier","u"],
+["grimstroke","Grimstroke","i"],["hoodwink","Hoodwink","a"],["void_spirit","Void Spirit","u"],["snapfire","Snapfire","u"],
+["mars","Mars","s"],["ringmaster","Ringmaster","i"],["dawnbreaker","Dawnbreaker","s"],["marci","Marci","u"],
+["primal_beast","Primal Beast","s"],["muerta","Muerta","i"],["kez","Kez","a"],["largo","Largo","s"]
+];
+HEROES.sort((x,y)=>x[1].localeCompare(y[1]));
+const byId = {}; HEROES.forEach(h=>byId[h[0]]=h);
+
+const CDN = "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/";
+const img = s => CDN + "heroes/" + s + ".png";
+const ATTRS = {
+  s:{label:"СИЛА", icon:CDN+"icons/hero_strength.png"},
+  a:{label:"ЛОВКОСТЬ", icon:CDN+"icons/hero_agility.png"},
+  i:{label:"ИНТЕЛЛЕКТ", icon:CDN+"icons/hero_intelligence.png"},
+  u:{label:"УНИВЕРСАЛЬНЫЕ", icon:CDN+"icons/hero_universal.png"}
+};
+const SHIELD_SVG = '<svg class="shield" viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg"><path d="M12 1 22 5v8c0 7-4.5 11.5-10 14C6.5 24.5 2 20 2 13V5Z" fill="#c8aa6e" stroke="#5c4a22" stroke-width="1.6"/><path d="M12 4.2 19 7v6c0 5.2-3.2 8.6-7 10.6C8.2 21.6 5 18.2 5 13V7Z" fill="#8a6f3c"/></svg>';
+
+/* ---------- ЗВУКИ: оригинальный анонсер Dota 2 (Dota 2 Wiki) ---------- */
+const SND_BASE = "https://static.wikia.nocookie.net/dota2_gamepedia/images/";
+const SND_FILES = {
+  pick_radiant:"9/95/Vo_announcer_announcer_pick_rad.mp3",
+  pick_dire:"7/7d/Vo_announcer_announcer_pick_dire.mp3",
+  ban_radiant:"5/5f/Vo_announcer_announcer_ban_rad.mp3",
+  ban_dire:"a/ab/Vo_announcer_announcer_ban_dire.mp3",
+  sec10:"c/c2/Vo_announcer_announcer_count_pick_10.mp3",
+  sec5:"2/26/Vo_announcer_announcer_count_pick_5.mp3",
+  reserve:"2/22/Vo_announcer_announcer_time_reserve.mp3",
+  reserveUsing:"d/d6/Vo_announcer_announcer_time_reserve_using.mp3",
+  complete_radiant:"6/69/Vo_announcer_announcer_team_complete_rad.mp3",
+  complete_dire:"5/50/Vo_announcer_announcer_team_complete_dire.mp3",
+  choose:"5/54/Vo_announcer_announcer_choose_hero.mp3",
+  mode_cm:"e/e1/Vo_announcer_announcer_type_capt_mode.mp3",
+  mode_cd:"7/74/Vo_announcer_announcer_type_capt_draft.mp3"
+};
+const SND = {};
+for (const k in SND_FILES){ SND[k] = new Audio(SND_BASE + SND_FILES[k] + "/revision/latest"); SND[k].preload = "auto"; }
+let soundOn = true, audioUnlocked = false;
+function unlockAudio(){
+  if (audioUnlocked) return; audioUnlocked = true;
+  for (const k in SND){ const a=SND[k]; a.muted=true;
+    a.play().then(()=>{a.pause(); a.currentTime=0; a.muted=false;}).catch(()=>{a.muted=false;}); }
+}
+document.addEventListener("pointerdown", unlockAudio, {once:true});
+function play(key){
+  if (!soundOn || !SND[key]) return;
+  try{ const a=SND[key]; a.currentTime=0; a.play().catch(()=>{}); }catch(e){}
+}
+function playChain(keys){
+  if (!soundOn || !keys.length) return;
+  const [head, ...rest] = keys; const a = SND[head]; if (!a){ playChain(rest); return; }
+  const next = ()=>{ a.removeEventListener("ended", next); playChain(rest); };
+  a.addEventListener("ended", next);
+  try{ a.currentTime=0; a.play().catch(()=>playChain(rest)); }catch(e){ playChain(rest); }
+}
+
+/* ---------- РЕПЛИКИ ГЕРОЕВ ПРИ ПИКЕ (оригинальная озвучка Dota 2, спавн-фразы) ----------
+   Для Ringmaster, Kez и Largo озвучки на вики пока нет — при их пике тишина. */
+const HERO_VO = {
+"antimage":"d/d3/Vo_antimage_anti_spawn_01.mp3",
+"axe":"5/5e/Vo_axe_axe_spawn_01.mp3",
+"bane":"2/20/Vo_bane_bane_spawn_02.mp3",
+"bloodseeker":"4/48/Vo_bloodseeker_blod_spawn_01.mp3",
+"crystal_maiden":"b/b2/Vo_crystalmaiden_cm_spawn_01.mp3",
+"drow_ranger":"9/94/Vo_drowranger_dro_spawn_01.mp3",
+"earthshaker":"7/72/Vo_earthshaker_erth_spawn_01.mp3",
+"juggernaut":"9/92/Vo_juggernaut_jug_spawn_01.mp3",
+"mirana":"0/09/Vo_mirana_mir_spawn_01.mp3",
+"morphling":"e/e6/Vo_morphling_mrph_spawn_01.mp3",
+"nevermore":"e/e6/Vo_nevermore_nev_spawn_01.mp3",
+"phantom_lancer":"8/8e/Vo_phantom_lancer_plance_spawn_01.mp3",
+"puck":"6/67/Vo_puck_puck_spawn_01.mp3",
+"pudge":"6/68/Vo_pudge_pud_spawn_01.mp3",
+"razor":"1/14/Vo_razor_raz_spawn_01.mp3",
+"sand_king":"0/0c/Vo_sandking_skg_spawn_01.mp3",
+"storm_spirit":"1/16/Vo_stormspirit_ss_spawn_01.mp3",
+"sven":"e/e9/Vo_sven_sven_spawn_01.mp3",
+"tiny":"6/68/Vo_tiny_tiny_spawn_01.mp3",
+"vengefulspirit":"6/6e/Vo_vengefulspirit_vng_spawn_01.mp3",
+"windrunner":"b/b2/Vo_windrunner_wind_spawn_01.mp3",
+"zuus":"1/10/Vo_zuus_zuus_spawn_01.mp3",
+"kunkka":"0/06/Vo_kunkka_kunk_spawn_01.mp3",
+"lina":"2/22/Vo_lina_lina_spawn_01.mp3",
+"lion":"a/a5/Vo_lion_lion_spawn_01.mp3",
+"shadow_shaman":"9/97/Vo_shadowshaman_shad_spawn_01.mp3",
+"slardar":"2/23/Vo_slardar_slar_spawn_01.mp3",
+"tidehunter":"7/7f/Vo_tidehunter_tide_spawn_01.mp3",
+"witch_doctor":"5/51/Vo_witchdoctor_wdoc_spawn_01.mp3",
+"lich":"6/6e/Vo_lich_lich_spawn_01.mp3",
+"riki":"6/67/Vo_riki_riki_spawn_01.mp3",
+"enigma":"9/9d/Vo_enigma_enig_spawn_01.mp3",
+"tinker":"9/9a/Vo_tinker_tink_spawn_01.mp3",
+"sniper":"4/42/Vo_sniper_snip_spawn_01.mp3",
+"necrolyte":"0/02/Vo_necrolyte_necr_spawn_01.mp3",
+"warlock":"c/c9/Vo_warlock_warl_spawn_01.mp3",
+"beastmaster":"a/a4/Vo_beastmaster_beas_spawn_01.mp3",
+"queenofpain":"7/75/Vo_queenofpain_pain_spawn_01.mp3",
+"venomancer":"5/5e/Vo_venomancer_venm_spawn_01.mp3",
+"faceless_void":"f/f8/Vo_faceless_void_face_spawn_01.mp3",
+"skeleton_king":"b/b3/Vo_skeleton_king_wraith_spawn_01.mp3",
+"death_prophet":"e/ed/Vo_death_prophet_dpro_spawn_01.mp3",
+"phantom_assassin":"6/6a/Vo_phantom_assassin_phass_spawn_01.mp3",
+"pugna":"1/19/Vo_pugna_pugna_spawn_01.mp3",
+"templar_assassin":"0/08/Vo_templar_assassin_temp_spawn_01.mp3",
+"viper":"4/43/Vo_viper_vipe_spawn_01.mp3",
+"luna":"1/1a/Vo_luna_luna_spawn_01.mp3",
+"dragon_knight":"e/ec/Vo_dragon_knight_drag_spawn_01.mp3",
+"dazzle":"f/f8/Vo_dazzle_dazz_spawn_01.mp3",
+"rattletrap":"e/eb/Vo_rattletrap_ratt_spawn_01.mp3",
+"leshrac":"1/18/Vo_leshrac_lesh_spawn_01.mp3",
+"furion":"0/09/Vo_furion_furi_spawn_01.mp3",
+"life_stealer":"4/46/Vo_life_stealer_lifest_spawn_01.mp3",
+"dark_seer":"0/0a/Vo_dark_seer_dkseer_spawn_01.mp3",
+"clinkz":"9/91/Vo_clinkz_clinkz_spawn_01.mp3",
+"omniknight":"3/37/Vo_omniknight_omni_spawn_01.mp3",
+"enchantress":"e/e2/Vo_enchantress_ench_spawn_01.mp3",
+"huskar":"c/c3/Vo_huskar_husk_spawn_01.mp3",
+"night_stalker":"a/a8/Vo_night_stalker_nstalk_spawn_01.mp3",
+"broodmother":"8/86/Vo_broodmother_broo_spawn_01.mp3",
+"bounty_hunter":"1/1e/Vo_bounty_hunter_bount_spawn_01.mp3",
+"weaver":"e/e8/Vo_weaver_weav_spawn_01.mp3",
+"jakiro":"3/3c/Vo_jakiro_jak_spawn_01.mp3",
+"batrider":"1/1a/Vo_batrider_bat_spawn_01.mp3",
+"chen":"b/bc/Vo_chen_chen_spawn_01.mp3",
+"spectre":"4/4c/Vo_spectre_spec_spawn_01.mp3",
+"ancient_apparition":"f/fd/Vo_ancient_apparition_appa_spawn_01.mp3",
+"doom_bringer":"1/11/Vo_doom_bringer_doom_spawn_01.mp3",
+"ursa":"3/34/Vo_ursa_ursa_spawn_01.mp3",
+"spirit_breaker":"9/93/Vo_spirit_breaker_spir_spawn_01.mp3",
+"gyrocopter":"0/03/Vo_gyrocopter_gyro_spawn_01.mp3",
+"alchemist":"f/fd/Vo_alchemist_alch_spawn_01.mp3",
+"invoker":"8/86/Vo_invoker_invo_spawn_02.mp3",
+"silencer":"a/a1/Vo_silencer_silen_spawn_01.mp3",
+"obsidian_destroyer":"2/21/Vo_outworld_destroyer_odest_spawn_02.mp3",
+"lycan":"a/a4/Vo_lycan_lycan_spawn_01.mp3",
+"brewmaster":"8/8e/Vo_brewmaster_brew_spawn_01.mp3",
+"shadow_demon":"3/3e/Vo_shadow_demon_shadow_demon_spawn_01.mp3",
+"lone_druid":"6/65/Vo_lone_druid_lone_druid_spawn_01.mp3",
+"chaos_knight":"4/40/Vo_chaos_knight_chaknight_spawn_01.mp3",
+"meepo":"b/b7/Vo_meepo_meepo_spawn_01.mp3",
+"treant":"f/f7/Vo_treant_treant_spawn_01.mp3",
+"ogre_magi":"a/a8/Vo_ogre_magi_ogmag_spawn_01.mp3",
+"undying":"6/68/Vo_undying_undying_spawn_01.mp3",
+"rubick":"0/0b/Vo_rubick_rubick_spawn_01.mp3",
+"disruptor":"2/20/Vo_disruptor_dis_spawn_01.mp3",
+"nyx_assassin":"9/97/Vo_nyx_assassin_nyx_spawn_01.mp3",
+"naga_siren":"1/1e/Vo_naga_siren_naga_spawn_01.mp3",
+"keeper_of_the_light":"c/c7/Vo_keeper_of_the_light_keep_spawn_01.mp3",
+"wisp":"1/14/Vo_wisp_move03.mp3",
+"visage":"8/82/Vo_visage_visa_spawn_01.mp3",
+"slark":"d/d8/Vo_slark_slark_spawn_01.mp3",
+"medusa":"0/04/Vo_medusa_medus_spawn_01.mp3",
+"troll_warlord":"d/df/Vo_troll_warlord_troll_spawn_01.mp3",
+"centaur":"4/48/Vo_centaur_cent_spawn_01.mp3",
+"magnataur":"2/23/Vo_magnataur_magn_spawn_02.mp3",
+"shredder":"c/cb/Vo_shredder_timb_spawn_01.mp3",
+"bristleback":"1/1d/Vo_bristleback_bristle_spawn_01.mp3",
+"tusk":"f/f7/Vo_tusk_tusk_spawn_01.mp3",
+"skywrath_mage":"9/99/Vo_skywrath_mage_drag_spawn_01.mp3",
+"abaddon":"8/89/Vo_abaddon_abad_spawn_01.mp3",
+"elder_titan":"9/94/Vo_elder_titan_elder_spawn_01.mp3",
+"legion_commander":"1/17/Vo_legion_commander_legcom_spawn_01.mp3",
+"techies":"3/32/Vo_techies_tech_spawn_01.mp3",
+"ember_spirit":"c/c1/Vo_ember_spirit_embr_spawn_01.mp3",
+"earth_spirit":"9/9d/Vo_earth_spirit_earthspi_spawn_01.mp3",
+"abyssal_underlord":"5/58/Vo_abyssal_underlord_abys_spawn_02.mp3",
+"terrorblade":"c/ca/Vo_terrorblade_terr_spawn_01.mp3",
+"phoenix":"9/93/Vo_phoenix_phoenix_bird_respawn.mp3",
+"oracle":"2/28/Vo_oracle_orac_spawn_01.mp3",
+"winter_wyvern":"4/4d/Vo_winter_wyvern_winwyv_spawn_01.mp3",
+"arc_warden":"4/4a/Vo_arc_warden_arcwar_spawn_01.mp3",
+"monkey_king":"9/91/Vo_monkey_king_mk_takeover_vo.mp3",
+"dark_willow":"6/6b/Vo_dark_willow_sylph_spawn_06.mp3",
+"pangolier":"d/d2/Vo_pangolin_pangolin_spawn_01.mp3",
+"grimstroke":"2/21/Vo_grimstroke_grimstroke_spawn_11.mp3",
+"hoodwink":"8/82/Vo_hoodwink_hoodwink_intro_16_03.mp3",
+"void_spirit":"3/39/Vo_void_spirit_voidspir_spawn_11_03.mp3",
+"snapfire":"0/0f/Vo_snapfire_snapfire_spawn_26.mp3",
+"mars":"2/2f/Vo_mars_mars_hero_intro_04.mp3",
+"dawnbreaker":"6/67/Vo_dawnbreaker_valora_intro_07_03.mp3",
+"marci":"a/aa/Vo_marci_marci_move.mp3",
+"primal_beast":"9/99/Vo_primal_beast_primal_attack_01.mp3",
+"muerta":"d/db/Vo_muerta_ally_035.mp3"
+};
+const heroLineCache = {};
+function heroLineAudio(short){
+  if (!HERO_VO[short]) return null;
+  if (!heroLineCache[short]){
+    const a = new Audio(SND_BASE + HERO_VO[short] + "/revision/latest");
+    a.preload = "auto";
+    heroLineCache[short] = a;
+  }
+  return heroLineCache[short];
+}
+function playAudioThen(a, onend, maxMs){
+  let done = false;
+  const fin = ()=>{ if (!done){ done = true; a.removeEventListener("ended", fin); if (onend) onend(); } };
+  a.addEventListener("ended", fin);
+  setTimeout(fin, maxMs || 5000);
+  try{ a.currentTime = 0; a.play().catch(fin); }
+  catch(e){ fin(); }
+}
+function playHeroLine(short, onend){
+  if (!soundOn){ if (onend) onend(); return; }
+  const a = heroLineAudio(short);
+  if (!a){ if (onend) onend(); return; }   // нет реплики (Ringmaster, Kez, Largo) — тишина
+  playAudioThen(a, onend, 4500);
+}
+function playThen(key, onend){
+  if (!soundOn || !SND[key]){ if (onend) onend(); return; }
+  playAudioThen(SND[key], onend, 5000);
+}
+
+/* ---------- ПРАВИЛА ---------- */
+const RULES = {
+  /* тайминги игры /2: баны1 15→8с, остальное 30→15с; резерв /4: CM 130→65с, банк CD 180→45с */
+  cm:{ banSlots:7, reserve:65, phases:[
+    {type:"ban",  order:"AABBABB", base:8,  label:"СТАДИЯ БАНОВ 1"},
+    {type:"pick", order:"AB",      base:15, label:"СТАДИЯ ПИКОВ 1"},
+    {type:"ban",  order:"AAB",     base:15, label:"СТАДИЯ БАНОВ 2"},
+    {type:"pick", order:"BAABBA",  base:15, label:"СТАДИЯ ПИКОВ 2"},
+    {type:"ban",  order:"ABAB",    base:15, label:"СТАДИЯ БАНОВ 3"},
+    {type:"pick", order:"AB",      base:15, label:"СТАДИЯ ПИКОВ 3"} ]},
+  cd:{ banSlots:3, reserve:45, phases:[
+    {type:"ban",  order:"ABABAB",     base:0, label:"СТАДИЯ БАНОВ"},
+    {type:"pick", order:"ABBAABBAAB", base:0, label:"СТАДИЯ ПИКОВ"} ]}
+};
+function buildSeq(mode, firstPick){
+  const second = firstPick === "radiant" ? "dire" : "radiant";
+  const seq = [];
+  RULES[mode].phases.forEach(ph=>{
+    for (const ch of ph.order)
+      seq.push({team: ch==="A" ? firstPick : second, type: ph.type, base: ph.base, label: ph.label});
+  });
+  return seq;
+}
+
+/* ---------- СОСТОЯНИЕ ---------- */
+const S = {
+  mode:"cm", names:{radiant:"Radiant", dire:"Dire"}, firstPick:null,
+  protectedBy:{radiant:[], dire:[]},           // по 2 героя на команду
+  pool:null,                                    // CD: Set из 28 имён
+  seq:[], idx:-1,
+  bans:{radiant:[], dire:[]}, picks:{radiant:[], dire:[]},
+  unavailable:new Set(),                        // забанены или выбраны
+  reserves:{radiant:130, dire:130},
+  clock:null, paused:false, active:false, preview:null,
+  announced:{}, timerId:null, between:false
+};
+const isProtected = s => S.protectedBy.radiant.includes(s) || S.protectedBy.dire.includes(s);
+const inPool = s => !S.pool || S.pool.has(s);
+const $ = id => document.getElementById(id);
+const fmtMSS = t => { t=Math.max(0,Math.ceil(t)); return Math.floor(t/60)+":"+String(t%60).padStart(2,"0"); };
+function toast(msg, gold){
+  const t=$("toast"); t.textContent=msg; t.className="show"+(gold?" goldy":"");
+  clearTimeout(t._h); t._h=setTimeout(()=>t.className="",1800);
+}
+/* ---------- ОБЩИЙ РЕНДЕР СЕТКИ ГЕРОЕВ ---------- */
+function renderGrid(container, opts){
+  container.innerHTML = "";
+  const els = {};
+  for (const a of ["s","a","i","u"]){
+    const col = document.createElement("div");
+    col.className = "attr-col"; col.dataset.a = a;
+    col.innerHTML = `<div class="attr-head"><img src="${ATTRS[a].icon}" alt=""><span>${ATTRS[a].label}</span></div>`;
+    const g = document.createElement("div"); g.className = "hgrid";
+    HEROES.filter(h=>h[2]===a).forEach(h=>{
+      if (opts.poolOnly && !inPool(h[0])) return;
+      const d = document.createElement("div");
+      d.className = "hero"; d.dataset.short = h[0];
+      d.style.backgroundImage = `url(${img(h[0])})`;
+      d.innerHTML = `<span class="nm">${h[1]}</span>`;
+      d.addEventListener("click", ()=>opts.onClick(h[0], d));
+      g.appendChild(d); els[h[0]] = d;
+    });
+    col.appendChild(g); container.appendChild(col);
+  }
+  return els;
+}
+function matchHero(short, q){
+  const qq = q.toLowerCase().replace(/'/g,"").trimStart();
+  if (!qq) return true;
+  const name = byId[short][1].toLowerCase().replace(/'/g,"");
+  if (qq.includes(" ")) return name.startsWith(qq);
+  return name.split(/[\s-]+/).some(w=>w.startsWith(qq)) || short.replace(/_/g,"").startsWith(qq);
+}
+function applyFilter(els, q){
+  for (const s in els) els[s].classList.toggle("dimmed", !matchHero(s, q));
+}
+function bindSearch(input, els){
+  input.addEventListener("input", ()=>applyFilter(els, input.value));
+}
+
+/* ---------- ЭКРАНЫ ---------- */
+function show(id){
+  ["scr-setup","scr-lobby","scr-coin","scr-protect","scr-draft"].forEach(x=>$(x).classList.toggle("hidden", x!==id));
+  window.scrollTo(0,0);
+}
+
+/* ================= ОНЛАЙН (PeerJS, host-авторитарная модель) =================
+   Хост создаёт комнату и является судьёй: тайминги, тайм-ауты и применение
+   действий считает он и рассылает гостю. Гость шлёт только свои намерения. */
+const NET = {
+  online:false, isHost:false, side:null, peer:null, conn:null, code:"",
+  seats:{ radiant:{taken:false,name:"",ready:false,owner:null},
+          dire:{taken:false,name:"",ready:false,owner:null} },
+  protectsGot:{}
+};
+const defaultName = side => side === "radiant" ? "Radiant" : "Dire";
+function netSend(m){ try{ if (NET.conn && NET.conn.open) NET.conn.send(JSON.stringify(m)); }catch(e){} }
+function myTurn(){ return !NET.online || (S.seq[S.idx] && S.seq[S.idx].team === NET.side); }
+function guestSide(){ return ["radiant","dire"].find(s=>NET.seats[s].owner === "guest") || null; }
+function syncMySide(){
+  const role = NET.isHost ? "host" : "guest";
+  NET.side = ["radiant","dire"].find(s=>NET.seats[s].owner === role) || null;
+}
+function makeCode(){
+  const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s = "";
+  for (let i=0;i<5;i++) s += A[Math.floor(Math.random()*A.length)];
+  return s;
+}
+const roomPeerId = code => "d2tpb-" + code.toLowerCase();
+
+function netHost(){
+  if (!window.Peer){ toast("PeerJS не загрузился — проверьте интернет"); return; }
+  NET.online = true; NET.isHost = true; NET.code = makeCode();
+  show("scr-lobby"); renderLobby();
+  $("lobby-status").textContent = "Создаём комнату…";
+  NET.peer = new Peer(roomPeerId(NET.code));
+  NET.peer.on("open", ()=>{
+    $("lobby-code").textContent = "КОД: " + NET.code;
+    $("lobby-status").textContent = "Комната создана. Ожидание соперника…";
+  });
+  NET.peer.on("connection", c=>{
+    if (NET.conn && NET.conn.open){ try{ c.close(); }catch(e){} return; }
+    NET.conn = c;
+    c.on("open", ()=>{ $("lobby-status").textContent = "Соперник подключился"; sendLobby(); });
+    c.on("data", d=>{ try{ onNetData(JSON.parse(d)); }catch(e){} });
+    c.on("close", netLost);
+  });
+  NET.peer.on("error", e=>toast("Ошибка соединения: " + e.type));
+}
+function netJoin(code){
+  if (!window.Peer){ toast("PeerJS не загрузился — проверьте интернет"); return; }
+  code = (code || "").trim().toUpperCase();
+  if (code.length < 4){ toast("Введите код комнаты"); return; }
+  NET.online = true; NET.isHost = false; NET.code = code;
+  show("scr-lobby"); renderLobby();
+  $("lobby-code").textContent = "КОД: " + code;
+  $("lobby-status").textContent = "Подключаемся…";
+  NET.peer = new Peer();
+  NET.peer.on("open", ()=>{
+    NET.conn = NET.peer.connect(roomPeerId(code), {reliable:true});
+    NET.conn.on("open", ()=>{ $("lobby-status").textContent = "Подключено. Займите свободную сторону"; netSend({t:"hello"}); });
+    NET.conn.on("data", d=>{ try{ onNetData(JSON.parse(d)); }catch(e){} });
+    NET.conn.on("close", netLost);
+  });
+  NET.peer.on("error", e=>toast(e.type === "peer-unavailable" ? "Комната не найдена" : "Ошибка: " + e.type));
+}
+function netLost(){
+  if (!NET.online) return;
+  const st = $("lobby-status"); if (st) st.textContent = "Связь потеряна";
+  toast("Связь с соперником потеряна");
+}
+function sendLobby(){ netSend({t:"lobby", seats:NET.seats, mode:S.mode}); }
+function renderLobby(){
+  for (const side of ["radiant","dire"]){
+    const st = NET.seats[side];
+    const stateEl = $("seat-state-"+side), btn = $("seat-btn-"+side), inp = $("seat-name-"+side);
+    const mine = NET.side === side;
+    if (!st.taken){
+      stateEl.textContent = "Свободна";
+      btn.classList.remove("hidden"); btn.disabled = !!NET.side; btn.textContent = "Занять сторону";
+      inp.classList.add("hidden");
+    } else if (mine && !st.ready){
+      stateEl.textContent = "Ваша сторона — впишите название";
+      inp.classList.remove("hidden");
+      btn.classList.remove("hidden"); btn.disabled = false; btn.textContent = "Готов";
+    } else {
+      stateEl.textContent = (st.ready ? "Готов ✓ " : "Занята: ") + (st.name || (st.ready ? "" : "…"));
+      inp.classList.add("hidden"); btn.classList.add("hidden");
+    }
+  }
+  $("lobby-mode").textContent = S.mode === "cm" ? "CAPTAINS MODE" : "CAPTAINS DRAFT";
+}
+["radiant","dire"].forEach(side=>{
+  $("seat-btn-"+side).addEventListener("click", ()=>{
+    const st = NET.seats[side];
+    if (!st.taken){
+      if (NET.side) return;
+      if (NET.isHost){
+        NET.seats[side] = {taken:true, name:"", ready:false, owner:"host"};
+        syncMySide(); renderLobby(); sendLobby();
+      } else netSend({t:"claim", side});
+    } else if (NET.side === side && !st.ready){
+      const nm = ($("seat-name-"+side).value.trim() || defaultName(side)).slice(0,24);
+      if (NET.isHost){
+        st.name = nm; st.ready = true;
+        renderLobby(); sendLobby(); maybeStartOnline();
+      } else netSend({t:"ready", side, name:nm});
+    }
+  });
+});
+function maybeStartOnline(){
+  const r = NET.seats.radiant, d = NET.seats.dire;
+  if (!(r.ready && d.ready)) return;
+  S.names.radiant = r.name || "Radiant"; S.names.dire = d.name || "Dire";
+  S.firstPick = Math.random() < 0.5 ? "radiant" : "dire";
+  if (S.mode === "cd") genPool();
+  netSend({t:"begin", firstPick:S.firstPick, pool:S.pool ? [...S.pool] : null,
+           names:{radiant:S.names.radiant, dire:S.names.dire}, mode:S.mode});
+  onlineCoin();
+}
+function onlineCoin(){
+  show("scr-coin");
+  $("btn-flip").classList.add("hidden");
+  $("coin-result").classList.add("hidden");
+  $("coin-caption").textContent = "Бросаем монету…";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    $("coin").style.transform = `rotateY(${5*360 + (S.firstPick === "dire" ? 180 : 0)}deg)`;
+  }));
+  setTimeout(()=>{
+    $("coin-caption").textContent = "ПЕРВЫЙ ПИК: " + S.names[S.firstPick].toUpperCase();
+    setTimeout(onlineProtect, 1400);
+  }, 2800);
+}
+function onlineProtect(){
+  show("scr-protect");
+  buildProtectGrid(NET.side);
+}
+function submitProtectOnline(){
+  $("btn-protect-ok").disabled = true;
+  $("protect-cnt").textContent = "Ожидание соперника…";
+  if (NET.isHost){ NET.protectsGot[NET.side] = [...protectSel]; checkProtects(); }
+  else netSend({t:"protect", side:NET.side, heroes:[...protectSel]});
+}
+function checkProtects(){
+  if (!NET.protectsGot.radiant || !NET.protectsGot.dire) return;
+  S.protectedBy = {radiant:[...NET.protectsGot.radiant], dire:[...NET.protectsGot.dire]};
+  netSend({t:"protects", p:S.protectedBy});
+  initDraft();
+}
+/* очередь применённых действий у гостя: ждём, пока отыграет реплика героя */
+const netQueue = [];
+function queueApplied(m){ netQueue.push(m); drainApplied(); }
+function drainApplied(){
+  if (!netQueue.length) return;
+  if (S.between || S.resolving){ setTimeout(drainApplied, 120); return; }
+  const m = netQueue.shift();
+  lockIn(m.short);
+  S.reserves = m.reserves; updateReserveLabels();
+  if (netQueue.length) setTimeout(drainApplied, 150);
+}
+function hostApplyGuestAct(short){
+  if (!S.active || S.paused || S.between || S.resolving) return;
+  const act = S.seq[S.idx];
+  if (!act || act.team !== guestSide()) return;
+  if (!short || S.unavailable.has(short) || !inPool(short)) return;
+  if (act.type === "ban" && isProtected(short)) return;
+  lockIn(short);
+}
+function onNetData(m){
+  switch (m.t){
+    case "hello": if (NET.isHost) sendLobby(); break;
+    case "lobby":
+      if (!NET.isHost){ NET.seats = m.seats; S.mode = m.mode; syncMySide(); renderLobby(); }
+      break;
+    case "claim":
+      if (NET.isHost && !NET.seats[m.side].taken && !guestSide()){
+        NET.seats[m.side] = {taken:true, name:"", ready:false, owner:"guest"};
+        renderLobby(); sendLobby();
+      }
+      break;
+    case "ready":
+      if (NET.isHost && NET.seats[m.side] && NET.seats[m.side].owner === "guest" && !NET.seats[m.side].ready){
+        NET.seats[m.side].name = ((m.name || "").trim() || defaultName(m.side)).slice(0,24);
+        NET.seats[m.side].ready = true;
+        renderLobby(); sendLobby(); maybeStartOnline();
+      }
+      break;
+    case "begin":
+      if (!NET.isHost){
+        S.mode = m.mode; S.names = m.names; S.firstPick = m.firstPick;
+        S.pool = m.pool ? new Set(m.pool) : null;
+        onlineCoin();
+      }
+      break;
+    case "protect":
+      if (NET.isHost){ NET.protectsGot[m.side] = (m.heroes || []).slice(0,2); checkProtects(); }
+      break;
+    case "protects":
+      if (!NET.isHost){ S.protectedBy = m.p; initDraft(); }
+      break;
+    case "act": if (NET.isHost) hostApplyGuestAct(m.short); break;
+    case "applied": if (!NET.isHost) queueApplied(m); break;
+    case "pause": doPause(true); break;
+    case "resume": doResume(true); break;
+  }
+}
+$("btn-net-host").addEventListener("click", netHost);
+$("btn-net-join").addEventListener("click", ()=>netJoin($("net-code").value));
+$("net-code").addEventListener("keydown", e=>{ if (e.key === "Enter") netJoin($("net-code").value); });
+
+/* --- Setup --- */
+const MODE_DESC = {
+  cm:"<b>Captains Mode.</b> Полный пул — 127 героев патча 7.41d · 14 банов и 10 пиков · 8/15 с на действие · резерв 65 с на команду.",
+  cd:"<b>Captains Draft.</b> Случайный пул из 28 героев (по 7 на атрибут) · по 3 бана и 5 пиков · общий банк времени 45 с на капитана · 15 с на обзор пула."
+};
+$("mode-desc").innerHTML = MODE_DESC.cm;
+document.querySelectorAll(".mode-tab").forEach(c=>{
+  c.addEventListener("click", ()=>{
+    document.querySelectorAll(".mode-tab").forEach(x=>x.classList.remove("sel"));
+    c.classList.add("sel"); S.mode = c.dataset.mode;
+    $("mode-desc").innerHTML = MODE_DESC[S.mode];
+  });
+});
+$("btn-setup-next").addEventListener("click", ()=>{
+  S.names.radiant = $("name-radiant").value.trim() || "Radiant";
+  S.names.dire = $("name-dire").value.trim() || "Dire";
+  show("scr-coin");
+});
+
+/* --- Монетка --- */
+$("coin-img-r").src = "https://static.wikia.nocookie.net/dota2_gamepedia/images/2/2a/Radiant_icon.png/revision/latest";
+$("coin-img-d").src = "https://static.wikia.nocookie.net/dota2_gamepedia/images/0/0e/Dire_icon.png/revision/latest";
+let flipped = false;
+$("btn-flip").addEventListener("click", ()=>{
+  if (flipped) return; flipped = true;
+  S.firstPick = Math.random() < 0.5 ? "radiant" : "dire";
+  const spins = 5*360 + (S.firstPick === "dire" ? 180 : 0);
+  $("coin").style.transform = `rotateY(${spins}deg)`;
+  $("btn-flip").disabled = true; $("btn-flip").style.opacity = .35;
+  setTimeout(()=>{
+    const nm = S.names[S.firstPick];
+    const who = $("coin-who");
+    who.textContent = `ПЕРВЫЙ ПИК: ${nm.toUpperCase()}`;
+    who.style.color = S.firstPick === "radiant" ? "var(--radiant-br)" : "var(--dire-br)";
+    $("coin-caption").textContent = S.firstPick === "radiant" ? "Выпал Radiant" : "Выпал Dire";
+    $("coin-result").classList.remove("hidden");
+  }, 2750);
+});
+$("btn-coin-next").addEventListener("click", ()=>{
+  if (S.mode === "cd") genPool();
+  startProtectFlow();
+});
+
+/* --- CD: генерация пула 28 (7 на атрибут) --- */
+function genPool(){
+  const pool = [];
+  for (const a of ["s","a","i","u"]){
+    const list = HEROES.filter(h=>h[2]===a).map(h=>h[0]);
+    for (let i=list.length-1; i>0; i--){ const j=Math.floor(Math.random()*(i+1)); [list[i],list[j]]=[list[j],list[i]]; }
+    pool.push(...list.slice(0,7));
+  }
+  S.pool = new Set(pool);
+}
+
+/* --- Защита от бана (по 2 героя на команду) --- */
+let protectQueue = [], protectSel = [], protectEls = {};
+function startProtectFlow(){
+  protectQueue = [S.firstPick, S.firstPick === "radiant" ? "dire" : "radiant"];
+  nextProtect();
+}
+function nextProtect(){
+  show("scr-protect");
+  buildProtectGrid(protectQueue[0]);
+}
+function buildProtectGrid(team){
+  protectSel = [];
+  const nm = S.names[team].toUpperCase();
+  const t = $("protect-title");
+  t.textContent = `${nm}: выберите 2 героев под защитой от бана`;
+  t.style.color = team === "radiant" ? "var(--radiant-br)" : "var(--dire-br)";
+  $("protect-cnt").textContent = "Выбрано: 0 / 2";
+  $("btn-protect-ok").disabled = true;
+  $("protect-search").value = "";
+  protectEls = renderGrid($("protect-grid"), {
+    poolOnly: S.mode === "cd",
+    onClick: (short, el)=>{
+      const i = protectSel.indexOf(short);
+      if (i >= 0){ protectSel.splice(i,1); el.classList.remove("sel"); }
+      else { if (protectSel.length >= 2){ toast("Можно выбрать только двух героев"); return; }
+             protectSel.push(short); el.classList.add("sel"); }
+      $("protect-cnt").textContent = `Выбрано: ${protectSel.length} / 2`;
+      $("btn-protect-ok").disabled = protectSel.length !== 2;
+    }
+  });
+  // показать уже защищённых героев другой команды
+  for (const tm of ["radiant","dire"]) S.protectedBy[tm].forEach(s=>{
+    if (protectEls[s]){ protectEls[s].classList.add("prot"); protectEls[s].insertAdjacentHTML("beforeend", SHIELD_SVG); }
+  });
+  bindSearch($("protect-search"), protectEls);
+}
+$("protect-clear").addEventListener("click", ()=>{
+  protectSel.forEach(s=>protectEls[s] && protectEls[s].classList.remove("sel"));
+  protectSel = [];
+  $("protect-cnt").textContent = "Выбрано: 0 / 2";
+  $("btn-protect-ok").disabled = true;
+});
+$("btn-protect-ok").addEventListener("click", ()=>{
+  if (NET.online){ submitProtectOnline(); return; }
+  const team = protectQueue.shift();
+  S.protectedBy[team] = [...protectSel];
+  if (protectQueue.length) nextProtect(); else initDraft();
+});
+
+/* ---------- ДРАФТ ---------- */
+let draftEls = {}, seqEls = [];
+function initDraft(){
+  const R = RULES[S.mode];
+  S.seq = buildSeq(S.mode, S.firstPick);
+  S.idx = -1;
+  S.reserves = {radiant:R.reserve, dire:R.reserve};
+  S.bans = {radiant:[], dire:[]}; S.picks = {radiant:[], dire:[]};
+  S.unavailable = new Set(); S.preview = null;
+
+  $("dr-name-radiant").textContent = S.names.radiant;
+  $("dr-name-dire").textContent = S.names.dire;
+  for (const t of ["radiant","dire"]){
+    const pr = $("picks-"+t); pr.innerHTML = "";
+    for (let i=0;i<5;i++) pr.insertAdjacentHTML("beforeend", `<div class="pslot"><span class="pnum">${i+1}</span></div>`);
+    const br = $("bans-"+t); br.innerHTML = "";
+    for (let i=0;i<R.banSlots;i++) br.insertAdjacentHTML("beforeend", `<div class="bslot"></div>`);
+  }
+  updateReserveLabels();
+
+  const bar = $("seqbar"); bar.innerHTML = ""; seqEls = [];
+  S.seq.forEach((a, i)=>{
+    if (i > 0 && a.label !== S.seq[i-1].label)
+      bar.insertAdjacentHTML("beforeend", '<div class="seq-gap"></div>');
+    const d = document.createElement("div");
+    d.className = `seq ${a.team} ${a.type}`;
+    d.textContent = a.type === "ban" ? "Б" : "П";
+    d.title = `${S.names[a.team]} — ${a.type === "ban" ? "бан" : "пик"}`;
+    bar.appendChild(d); seqEls.push(d);
+  });
+  bar.insertAdjacentHTML("beforeend",
+    `<div class="seq-legend">
+       <span class="lg"><span class="sq p"></span>крупные — пики</span>
+       <span class="lg"><span class="sq b"></span>мелкие — баны</span>
+       <span class="lg" style="color:var(--radiant-br)">■ ${S.names.radiant}</span>
+       <span class="lg" style="color:var(--dire-br)">■ ${S.names.dire}</span>
+     </div>`);
+
+  draftEls = renderGrid($("draft-grid"), { poolOnly:false, onClick: onDraftClick });
+  if (S.pool) for (const s in draftEls) draftEls[s].classList.toggle("notpool", !S.pool.has(s));
+  for (const tm of ["radiant","dire"]) S.protectedBy[tm].forEach(s=>{
+    if (draftEls[s] && !draftEls[s].classList.contains("prot")){
+      draftEls[s].classList.add("prot"); draftEls[s].insertAdjacentHTML("beforeend", SHIELD_SVG);
+    }
+  });
+  bindSearch($("draft-search"), draftEls);
+  $("draft-search").value = "";
+  show("scr-draft");
+
+  if (S.mode === "cd"){
+    play("mode_cd");
+    let sec = 15;
+    $("review-banner").classList.remove("hidden");
+    $("review-sec").textContent = sec;
+    $("ct-action").textContent = "ОБЗОР ПУЛА"; $("ct-action").className = "ct-action";
+    $("ct-time").textContent = sec; $("ct-phase").textContent = "CAPTAINS DRAFT";
+    const iv = setInterval(()=>{
+      sec--; $("review-sec").textContent = sec; $("ct-time").textContent = sec;
+      if (sec <= 0){ clearInterval(iv); $("review-banner").classList.add("hidden"); beginActions(false); }
+    }, 1000);
+  } else {
+    beginActions(true);
+  }
+  if (S.timerId) clearInterval(S.timerId);
+  S.timerId = setInterval(tick, 150);
+}
+function beginActions(withModeSound){
+  S.active = true;
+  S.idx = 0;
+  startAction(withModeSound ? "mode_cm" : null);
+}
+
+function actionSndKey(act){ return act.type + "_" + act.team; }
+function startAction(chainModeKey){
+  const act = S.seq[S.idx];
+  S.preview = null; S.announced = {}; S.resolving = false;
+  updatePreviewPanel(null);
+  $("draft-search").value = "";                 // сброс фильтра после каждого пика/бана
+  applyFilter(draftEls, "");
+  seqEls.forEach((e,i)=>e.classList.toggle("cur", i === S.idx));
+  $("panel-radiant").className = "tpanel radiant" + (act.team === "radiant" ? " active-radiant" : "");
+  $("panel-dire").className = "tpanel dire right" + (act.team === "dire" ? " active-dire" : "");
+  const nm = S.names[act.team].toUpperCase();
+  const ca = $("ct-action");
+  ca.textContent = `${nm} — ${act.type === "ban" ? "БАН" : "ПИК"}`;
+  ca.className = "ct-action " + act.team;
+  $("ct-phase").textContent = act.label + (S.mode === "cm" ? "" : " · CAPTAINS DRAFT");
+  $("ct-sub").textContent = "";
+  const lock = $("btn-lock");
+  lock.className = "btn-lock " + (act.type === "ban" ? "ban" : "pick");
+  lock.textContent = (NET.online && !myTurn()) ? "ХОД СОПЕРНИКА"
+                   : (act.type === "ban" ? "ЗАБАНИТЬ" : "ВЫБРАТЬ ГЕРОЯ");
+  lock.disabled = true;
+  updateTurnSlots(act);
+  const now = performance.now();
+  if (act.base > 0) S.clock = {mode:"base", endTs: now + act.base*1000};
+  else enterReserve(now, true);
+  if (chainModeKey) playChain([chainModeKey, actionSndKey(act)]);
+  else play(actionSndKey(act));
+  renderClock();
+}
+function enterReserve(now, silent){
+  const act = S.seq[S.idx];
+  const r = S.reserves[act.team];
+  if (r <= 0.05){ autoResolve(); return; }
+  S.clock = {mode:"reserve", endTs: now + r*1000};
+  $("ct-sub").textContent = S.mode === "cm" ? "РЕЗЕРВНОЕ ВРЕМЯ" : "БАНК ВРЕМЕНИ";
+  if (S.mode === "cm" && !silent) play("reserveUsing");
+}
+function updateTurnSlots(act){
+  document.querySelectorAll(".pslot.turn,.bslot.turn").forEach(e=>e.classList.remove("turn"));
+  const row = $((act.type === "ban" ? "bans-" : "picks-") + act.team);
+  const slots = row.children;
+  const n = (act.type === "ban" ? S.bans : S.picks)[act.team].length;
+  if (slots[n]) slots[n].classList.add("turn");
+}
+function updateReserveLabels(){
+  for (const t of ["radiant","dire"]){
+    const el = $("reserve-"+t);
+    const lbl = S.mode === "cm" ? "Резерв" : "Банк";
+    el.innerHTML = `${lbl} <b>${fmtMSS(S.reserves[t])}</b>`;
+    el.classList.remove("burning");
+  }
+}
+
+/* ---------- ТАЙМЕР ---------- */
+function tick(){
+  if (!S.active || S.paused || S.resolving || !S.clock) return;
+  const now = performance.now();
+  const rem = (S.clock.endTs - now) / 1000;
+  if (rem <= 0){
+    if (S.clock.mode === "base"){ enterReserve(now, false); }
+    else {
+      if (NET.online && !NET.isHost) return;   // тайм-аут судит только хост
+      S.reserves[S.seq[S.idx].team] = 0; updateReserveLabels(); autoResolve();
+    }
+    return;
+  }
+  renderClock();
+}
+function renderClock(){
+  if (!S.clock) return;
+  const act = S.seq[S.idx];
+  const now = performance.now();
+  const rem = Math.max(0, (S.clock.endTs - now) / 1000);
+  const sec = Math.ceil(rem);
+  const ct = $("ct-time");
+  ct.textContent = sec >= 60 ? fmtMSS(rem) : sec;
+  ct.className = "ct-time" + (S.clock.mode === "reserve" ? " reserve-mode" : "") + (sec <= 5 ? " low" : "");
+  if (S.clock.mode === "reserve"){
+    const el = $("reserve-"+act.team);
+    el.innerHTML = `${S.mode === "cm" ? "Резерв" : "Банк"} <b>${fmtMSS(rem)}</b>`;
+    el.classList.add("burning");
+  }
+  const key = S.clock.mode + sec;
+  if (sec === 10 && !S.announced[key]){ S.announced[key] = 1; play("sec10"); }
+  if (sec === 5 && !S.announced[key]){ S.announced[key] = 1; play("sec5"); }
+}
+
+/* ---------- ДЕЙСТВИЯ ---------- */
+function onDraftClick(short, el){
+  if (!S.active || S.paused || S.resolving || S.between) return;
+  if (NET.online && !myTurn()) return;              // онлайн: только за свою сторону
+  const act = S.seq[S.idx];
+  if (S.unavailable.has(short) || !inPool(short)) return;
+  if (act.type === "ban" && isProtected(short)){
+    el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
+    toast("🛡 Герой защищён от бана — его можно только пикнуть", true);
+    return;
+  }
+  if (S.preview && draftEls[S.preview]) draftEls[S.preview].classList.remove("sel");
+  S.preview = short;
+  el.classList.add("sel");
+  updatePreviewPanel(short);
+  $("btn-lock").disabled = false;
+  if (act.type === "pick") heroLineAudio(short);   // предзагрузка реплики героя
+}
+function updatePreviewPanel(short){
+  if (!short){
+    $("prev-img").style.backgroundImage = "";
+    $("prev-name").textContent = "Выберите героя";
+    $("prev-attr").innerHTML = "";
+    $("btn-lock").disabled = true;
+    return;
+  }
+  const h = byId[short];
+  $("prev-img").style.backgroundImage = `url(${img(short)})`;
+  $("prev-name").textContent = h[1];
+  $("prev-attr").innerHTML = `<img src="${ATTRS[h[2]].icon}" alt=""> ${ATTRS[h[2]].label}` +
+    (isProtected(short) ? ' · <span style="color:var(--gold-br)">под защитой</span>' : "");
+}
+function submitAction(short){
+  if (NET.online && !myTurn()) return;
+  if (NET.online && !NET.isHost){                    // гость шлёт намерение хосту
+    netSend({t:"act", short});
+    $("btn-lock").disabled = true;
+    return;
+  }
+  lockIn(short);
+}
+$("btn-lock").addEventListener("click", ()=>{ if (S.preview) submitAction(S.preview); });
+/* Быстрый набор с клавиатуры во время драфта: печатаешь имя — лишние герои затемняются */
+document.addEventListener("keydown", e=>{
+  if (e.key === "Enter" && S.active && !S.paused && S.preview && !$("btn-lock").disabled){ submitAction(S.preview); return; }
+  if (!S.active || S.paused || S.resolving) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const inp = $("draft-search");
+  if (e.target.tagName === "INPUT" && e.target !== inp) return;   // не мешаем другим полям
+  if (/^[a-zA-Z' -]$/.test(e.key)){
+    if (e.key === " " && !inp.value) return;                       // пробел без фильтра — игнор
+    if (e.target !== inp){ inp.value += e.key; applyFilter(draftEls, inp.value); e.preventDefault(); }
+  } else if (e.key === "Backspace" && e.target !== inp){
+    inp.value = inp.value.slice(0, -1);
+    applyFilter(draftEls, inp.value);
+    e.preventDefault();
+  } else if (e.key === "Escape"){
+    inp.value = ""; applyFilter(draftEls, "");
+  }
+});
+
+function lockIn(short){
+  if (!S.active || S.between) return;
+  const act = S.seq[S.idx];
+  const now = performance.now();
+  if (S.clock && S.clock.mode === "reserve")
+    S.reserves[act.team] = Math.max(0, (S.clock.endTs - now) / 1000);
+  S.clock = null;
+  updateReserveLabels();
+  if (NET.online && NET.isHost)
+    netSend({t:"applied", short, reserves:{radiant:S.reserves.radiant, dire:S.reserves.dire}});
+
+  if (act.type === "ban"){
+    S.bans[act.team].push(short);
+    const slot = $("bans-"+act.team).children[S.bans[act.team].length - 1];
+    if (short){
+      S.unavailable.add(short);
+      slot.innerHTML = `<img src="${img(short)}" alt="">`; slot.classList.add("done");
+      const el = draftEls[short]; el.classList.remove("sel"); el.classList.add("banned");
+      seqEls[S.idx].innerHTML = `<img src="${img(short)}" alt=""><div class="mini-x"></div>`;
+    } else {
+      slot.classList.add("skip"); slot.textContent = "⊘";
+      seqEls[S.idx].textContent = "⊘";
+    }
+  } else {
+    S.picks[act.team].push(short);
+    S.unavailable.add(short);
+    const slot = $("picks-"+act.team).children[S.picks[act.team].length - 1];
+    slot.innerHTML = `<span class="pnum">${S.picks[act.team].length}</span><img src="${img(short)}" alt="">`;
+    const el = draftEls[short]; el.classList.remove("sel"); el.classList.add("picked", "by-"+act.team);
+    seqEls[S.idx].innerHTML = `<img src="${img(short)}" alt="">`;
+  }
+  seqEls[S.idx].classList.remove("cur");
+
+  /* следующий ход (таймер и озвучка отсчёта) стартует только после реплики героя */
+  S.between = true;
+  const advance = ()=>{
+    S.between = false;
+    S.idx++;
+    if (S.idx >= S.seq.length) endDraft();
+    else startAction(null);
+  };
+  if (act.type === "pick"){
+    const fifth = S.picks[act.team].length === 5;
+    playHeroLine(short, ()=>{
+      if (fifth) playThen("complete_" + act.team, ()=>setTimeout(advance, 200));
+      else setTimeout(advance, 200);
+    });
+  } else setTimeout(advance, 250);
+}
+function autoResolve(){
+  if (S.resolving) return;
+  S.resolving = true;
+  const act = S.seq[S.idx];
+  setTimeout(()=>{
+    S.resolving = false;
+    if (!S.active) return;
+    if (act.type === "ban"){
+      toast(`Время ${S.names[act.team]} вышло — бан пропущен`);
+      lockIn(null);
+    } else {
+      const cand = HEROES.filter(h=>!S.unavailable.has(h[0]) && inPool(h[0])).map(h=>h[0]);
+      const rnd = cand[Math.floor(Math.random()*cand.length)];
+      toast(`Время ${S.names[act.team]} вышло — случайный герой: ${byId[rnd][1]}`);
+      lockIn(rnd);
+    }
+  }, 500);
+}
+
+/* ---------- ПАУЗА / ЗВУК ---------- */
+function doPause(remote){
+  if (!S.active || S.paused) return;
+  S.paused = true;
+  if (S.clock) S.clock.remMs = S.clock.endTs - performance.now();
+  $("pause-overlay").classList.remove("hidden");
+  if (!remote && NET.online) netSend({t:"pause"});
+}
+function doResume(remote){
+  if (!S.paused) return;
+  S.paused = false;
+  if (S.clock) S.clock.endTs = performance.now() + S.clock.remMs;
+  $("pause-overlay").classList.add("hidden");
+  if (!remote && NET.online) netSend({t:"resume"});
+}
+$("btn-pause").addEventListener("click", ()=>doPause(false));
+$("btn-resume").addEventListener("click", ()=>doResume(false));
+$("btn-sound").addEventListener("click", ()=>{
+  soundOn = !soundOn;
+  $("btn-sound").textContent = soundOn ? "🔊 Звук вкл" : "🔇 Звук выкл";
+});
+
+/* ---------- ФИНАЛ ---------- */
+function endDraft(){
+  S.active = false;
+  if (S.timerId) clearInterval(S.timerId);
+  $("ct-action").textContent = "ДРАФТ ЗАВЕРШЁН"; $("ct-action").className = "ct-action";
+  $("ct-time").textContent = "—"; $("ct-sub").textContent = "";
+  document.querySelectorAll(".pslot.turn,.bslot.turn").forEach(e=>e.classList.remove("turn"));
+  $("end-name-radiant").textContent = S.names.radiant;
+  $("end-name-dire").textContent = S.names.dire;
+  for (const t of ["radiant","dire"]){
+    const box = $("end-picks-"+t); box.innerHTML = "";
+    S.picks[t].forEach(s=>box.insertAdjacentHTML("beforeend", `<img src="${img(s)}" alt="${byId[s][1]}" title="${byId[s][1]}">`));
+  }
+  $("end-note").textContent =
+    `${S.mode === "cm" ? "Captains Mode" : "Captains Draft"} · первый пик: ${S.names[S.firstPick]}` +
+    ` · банов: ${S.bans.radiant.filter(Boolean).length + S.bans.dire.filter(Boolean).length}`;
+  prefetchExport();
+  setTimeout(()=>$("scr-end").classList.remove("hidden"), 900);
+}
+/* ---------- ЭКСПОРТ КАРТИНКИ ----------
+   Steam CDN не отдаёт CORS-заголовки, поэтому для canvas картинки
+   грузятся через images.weserv.nl (иначе canvas «испачкается» и не сохранится). */
+const proxied = s => "https://images.weserv.nl/?url=" +
+  encodeURIComponent("cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/" + s + ".png");
+function loadImg(url){
+  return new Promise((res, rej)=>{
+    const i = new Image(); i.crossOrigin = "anonymous";
+    i.onload = ()=>res(i); i.onerror = ()=>rej(url); i.src = url;
+    setTimeout(()=>rej(url), 12000);
+  });
+}
+const exportCache = {};
+function prefetchExport(){   // грузим картинки заранее, чтобы клик «Сохранить» был мгновенным
+  const need = [...S.picks.radiant, ...S.picks.dire, ...S.bans.radiant, ...S.bans.dire].filter(Boolean);
+  need.forEach(s=>{ if (!exportCache[s]) loadImg(proxied(s)).then(i=>exportCache[s]=i).catch(()=>{}); });
+}
+async function saveDraftImage(full){
+  const need = new Set([...S.picks.radiant, ...S.picks.dire]);
+  if (full) [...S.bans.radiant, ...S.bans.dire].forEach(s=>{ if (s) need.add(s); });
+  await Promise.all([...need].map(s=>exportCache[s] ? null : loadImg(proxied(s)).then(i=>exportCache[s]=i).catch(()=>null)));
+  const cache = exportCache;
+
+  const W = 1000, pad = 44, iw = 176, ih = 99;
+  const perRow = 12, cw = 72, ch = 41, cgap = 8, rowH = ch + cgap + 16;
+  const rows = Math.ceil(S.seq.length / perRow);
+  const H = full ? 460 + 40 + rows*rowH + 26 : 460;
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  const bg = g.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,"#16202c"); bg.addColorStop(.35,"#0b0f14"); bg.addColorStop(1,"#0b0f14");
+  g.fillStyle = bg; g.fillRect(0,0,W,H);
+  g.textAlign = "center"; g.fillStyle = "#c8aa6e"; g.font = "700 26px Oswald, Arial";
+  g.fillText((S.mode==="cm" ? "CAPTAINS MODE" : "CAPTAINS DRAFT") + " · DOTA 2 TURBO · 7.41d", W/2, 52);
+  g.font = "500 15px Arial"; g.fillStyle = "#7f8ea1";
+  g.fillText("Первый пик: " + S.names[S.firstPick], W/2, 78);
+
+  const drawTeam = (team, y)=>{
+    g.textAlign = "left"; g.font = "700 22px Oswald, Arial";
+    g.fillStyle = team === "radiant" ? "#b8e35f" : "#ff7a6b";
+    g.fillText(S.names[team].toUpperCase() + (team === "radiant" ? "  · RADIANT" : "  · DIRE"), pad, y - 12);
+    S.picks[team].forEach((s, i)=>{
+      const x = pad + i*(iw + 8);
+      g.fillStyle = "#0a0e13"; g.fillRect(x, y, iw, ih);
+      if (cache[s]) g.drawImage(cache[s], x, y, iw, ih);
+      g.fillStyle = "rgba(0,0,0,.68)"; g.fillRect(x, y + ih - 19, iw, 19);
+      g.fillStyle = "#dfe7f0"; g.font = "600 11px Arial"; g.textAlign = "center";
+      g.fillText(byId[s][1].toUpperCase(), x + iw/2, y + ih - 6);
+      g.textAlign = "left";
+      g.strokeStyle = team === "radiant" ? "#93c53b" : "#e04a3c"; g.lineWidth = 2;
+      g.strokeRect(x + 1, y + 1, iw - 2, ih - 2);
+    });
+  };
+  const second = S.firstPick === "radiant" ? "dire" : "radiant";
+  drawTeam(S.firstPick, 132);
+  drawTeam(second, 296);
+
+  if (full){
+    const y0 = 448;
+    g.textAlign = "left"; g.font = "700 17px Oswald, Arial"; g.fillStyle = "#c8aa6e";
+    g.fillText("ПОРЯДОК ДРАФТА — БАНЫ И ПИКИ", pad, y0);
+    const bi = {radiant:0, dire:0}, pi = {radiant:0, dire:0};
+    S.seq.forEach((a, i)=>{
+      const x = pad + (i % perRow)*(cw + cgap);
+      const y = y0 + 16 + Math.floor(i / perRow)*rowH;
+      const s = a.type === "ban" ? S.bans[a.team][bi[a.team]++] : S.picks[a.team][pi[a.team]++];
+      g.fillStyle = "#0a0e13"; g.fillRect(x, y, cw, ch);
+      if (s && cache[s]){
+        if (a.type === "ban"){
+          g.filter = "grayscale(1) brightness(.55)";
+          g.drawImage(cache[s], x, y, cw, ch);
+          g.filter = "none";
+          g.strokeStyle = "rgba(228,64,52,.95)"; g.lineWidth = 3;
+          g.beginPath(); g.moveTo(x + 6, y + ch - 5); g.lineTo(x + cw - 6, y + 5); g.stroke();
+        } else g.drawImage(cache[s], x, y, cw, ch);
+      } else {
+        g.fillStyle = "#66463c"; g.font = "700 16px Arial"; g.textAlign = "center";
+        g.fillText("⊘", x + cw/2, y + ch/2 + 6); g.textAlign = "left";
+      }
+      g.strokeStyle = a.team === "radiant" ? "#93c53b" : "#e04a3c"; g.lineWidth = 2;
+      g.strokeRect(x + 1, y + 1, cw - 2, ch - 2);
+      g.fillStyle = "#9fb0c3"; g.font = "600 10px Arial";
+      g.fillText((i + 1) + " · " + (a.type === "ban" ? "БАН" : "ПИК"), x + 2, y + ch + 12);
+    });
+  }
+  g.textAlign = "center"; g.fillStyle = "#54637a"; g.font = "500 11px Arial";
+  g.fillText("Изображения: Valve · Dota 2", W/2, H - 8);
+
+  /* картинка — сразу в буфер обмена; если буфер недоступен, скачиваем файлом */
+  const blob = await new Promise(r=>c.toBlob(r, "image/png"));
+  try{
+    await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
+    toast(full ? "Полный драфт с банами — в буфере, вставляй Ctrl+V" : "Картинка пиков — в буфере, вставляй Ctrl+V", true);
+  }catch(e){
+    const a = document.createElement("a");
+    a.download = ((full ? "draft_full_" : "draft_") + S.names.radiant + "_vs_" + S.names.dire)
+      .replace(/[^\wа-яА-ЯёЁ-]+/g, "_") + ".png";
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+    toast("Буфер обмена недоступен — картинка скачана файлом");
+  }
+}
+/* один клик — пики; тройной клик — полный драфт с банами */
+let saveClicks = 0, saveTimer = null;
+$("btn-save-img").addEventListener("click", ()=>{
+  saveClicks++;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    const full = saveClicks >= 3; saveClicks = 0;
+    saveDraftImage(full).catch(()=>toast("Не удалось сохранить картинку — проверьте интернет"));
+  }, 430);
+});
+
+$("btn-copy").addEventListener("click", ()=>{
+  const line = t => S.picks[t].map(s=>byId[s][1]).join(", ");
+  const bansLine = t => S.bans[t].map(s=>s ? byId[s][1] : "—").join(", ");
+  const prot = t => S.protectedBy[t].map(s=>byId[s][1]).join(", ");
+  const txt =
+`${S.mode === "cm" ? "CAPTAINS MODE" : "CAPTAINS DRAFT"} — Dota 2 Turbo 7.41d
+Первый пик: ${S.names[S.firstPick]}
+${S.names.radiant} (Radiant): ${line("radiant")}
+${S.names.dire} (Dire): ${line("dire")}
+
+Баны ${S.names.radiant}: ${bansLine("radiant")}
+Баны ${S.names.dire}: ${bansLine("dire")}
+
+Под защитой: ${prot("radiant")} (${S.names.radiant}); ${prot("dire")} (${S.names.dire})`;
+  navigator.clipboard.writeText(txt).then(()=>toast("Результат скопирован", true)).catch(()=>toast("Не удалось скопировать"));
+});
+$("btn-again").addEventListener("click", ()=>location.reload());
+</script>
+</body>
+</html>
