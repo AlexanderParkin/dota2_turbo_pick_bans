@@ -781,9 +781,10 @@ const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884
 const topicOut = ()=> "d2tpb/" + NET.code.toLowerCase() + "/" + (NET.isHost ? "h" : "g");
 const topicIn  = ()=> "d2tpb/" + NET.code.toLowerCase() + "/" + (NET.isHost ? "g" : "h");
 function netSend(m){
-  if (!NET.client || !NET.client.connected) return;
+  if (!NET.client) return;
   m._s = ++NET.seqOut;
   try{ NET.client.publish(topicOut(), JSON.stringify(m), {qos:1}); }catch(e){}
+  /* mqtt.js сам буферизует QoS1-публикации при обрыве и дошлёт после реконнекта */
 }
 function connectBroker(onReady, idx){
   idx = idx || 0;
@@ -793,15 +794,24 @@ function connectBroker(onReady, idx){
   }
   let opened = false;
   const c = mqtt.connect(BROKERS[idx], {
-    clientId: "d2tpb_" + Math.random().toString(36).slice(2, 12),
-    clean: true, connectTimeout: 8000, keepalive: 30, reconnectPeriod: 3000
+    /* стабильный clientId + clean:false = устойчивая сессия: брокер хранит
+       QoS1-сообщения, пока клиент офлайн (фоновые вкладки, обрывы сети).
+       keepalive:0 — иначе Chrome троттлит таймер пинга в фоновой вкладке
+       и брокер сам рвёт соединение. */
+    clientId: "d2tpb_" + NET.code.toLowerCase() + "_" + (NET.isHost ? "h" : "g"),
+    clean: false, connectTimeout: 8000, keepalive: 0, reconnectPeriod: 2000,
+    protocolVersion: 4
   });
   NET.client = c;
   c.on("connect", ()=>{
     if (!opened){
       opened = true;
       c.subscribe(topicIn(), {qos:1}, err=>{ if (!err) onReady(); });
-    } else c.subscribe(topicIn(), {qos:1});           // после автопереподключения
+    } else {
+      c.subscribe(topicIn(), {qos:1});                 // после автопереподключения
+      if (NET.isHost) sendLobby();
+      else if (!NET.lobbyGot) netSend({t:"hello"});
+    }
   });
   c.on("message", (t, payload)=>{
     let m; try{ m = JSON.parse(payload.toString()); }catch(e){ return; }
@@ -818,9 +828,11 @@ function connectBroker(onReady, idx){
 function startPing(){
   NET.lastSeen = Date.now();
   if (NET.pingIv) clearInterval(NET.pingIv);
+  /* в фоне интервал троттлится до ~1 раза в минуту — этого хватает,
+     чтобы держать NAT живым; порог потери связи поэтому большой */
   NET.pingIv = setInterval(()=>{
     netSend({t:"ping"});
-    if (NET.peerOnline && Date.now() - NET.lastSeen > 35000){ NET.peerOnline = false; netLost(); }
+    if (NET.peerOnline && Date.now() - NET.lastSeen > 150000){ NET.peerOnline = false; netLost(); }
   }, 10000);
 }
 function myTurn(){ return !NET.online || (S.seq[S.idx] && S.seq[S.idx].team === NET.side); }
