@@ -800,11 +800,11 @@ function connectBroker(onReady, idx){
   const c = mqtt.connect(BROKERS[idx], {
     /* стабильный clientId + clean:false = устойчивая сессия: брокер хранит
        QoS1-сообщения, пока клиент офлайн (фоновые вкладки, обрывы сети).
-       keepalive:0 — иначе Chrome троттлит таймер пинга в фоновой вкладке
-       и брокер сам рвёт соединение. */
+       timerVariant "worker": keepalive-пинги идут из Web Worker, который
+       Chrome НЕ троттлит в фоновой вкладке — соединение не умирает молча. */
     clientId: "d2tpb_" + NET.code.toLowerCase() + "_" + (NET.isHost ? "h" : "g"),
-    clean: false, connectTimeout: 8000, keepalive: 0, reconnectPeriod: 2000,
-    protocolVersion: 4
+    clean: false, connectTimeout: 8000, keepalive: 20, reconnectPeriod: 2000,
+    protocolVersion: 4, timerVariant: "worker"
   });
   NET.client = c;
   c.on("connect", ()=>{
@@ -829,16 +829,33 @@ function connectBroker(onReady, idx){
   c.on("error", fallback);
   setTimeout(fallback, 9000);
 }
+function reconnectHard(){
+  if (NET._rh && Date.now() - NET._rh < 30000) return;   // не чаще раза в 30 c
+  NET._rh = Date.now();
+  try{ NET.client.end(true); }catch(e){}
+  connectBroker(()=>{
+    if (NET.isHost){ sendLobby(); hostSnap(); }
+    else if (!NET.draftInited) netSend({t:"hello"});
+  });
+}
 function startPing(){
   NET.lastSeen = Date.now();
   if (NET.pingIv) clearInterval(NET.pingIv);
-  /* в фоне интервал троттлится до ~1 раза в минуту — этого хватает,
-     чтобы держать NAT живым; порог потери связи поэтому большой */
+  /* в фоне интервал троттлится до ~1 раза в минуту — пороги с запасом */
   NET.pingIv = setInterval(()=>{
     netSend({t:"ping"});
-    if (NET.peerOnline && Date.now() - NET.lastSeen > 150000){ NET.peerOnline = false; netLost(); }
+    const silent = Date.now() - NET.lastSeen;
+    if (NET.peerOnline && silent > 90000) reconnectHard();
+    if (NET.peerOnline && silent > 180000){ NET.peerOnline = false; netLost(); }
   }, 10000);
 }
+/* вернулись во вкладку — сразу освежаем состояние */
+document.addEventListener("visibilitychange", ()=>{
+  if (!document.hidden && NET.online && NET.client){
+    netSend({t:"ping"});
+    if (NET.isHost) hostSnap();
+  }
+});
 function myTurn(){ return !NET.online || (S.seq[S.idx] && S.seq[S.idx].team === NET.side); }
 function guestSide(){ return ["radiant","dire"].find(s=>NET.seats[s].owner === "guest") || null; }
 function syncMySide(){
