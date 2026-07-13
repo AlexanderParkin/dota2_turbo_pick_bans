@@ -420,8 +420,8 @@ button{font-family:inherit; cursor:pointer;}
 
 <div id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
-<script>if(!window.Peer)document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>');</script>
+<script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script>if(!window.mqtt)document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.10.1/mqtt.min.js"><\/script>');</script>
 <script>
 /* ================================================================
    DOTA 2 TURBO PICK/BANS — патч 7.41d
@@ -766,17 +766,63 @@ function show(id){
   window.scrollTo(0,0);
 }
 
-/* ================= ОНЛАЙН (PeerJS, host-авторитарная модель) =================
-   Хост создаёт комнату и является судьёй: тайминги, тайм-ауты и применение
-   действий считает он и рассылает гостю. Гость шлёт только свои намерения. */
+/* ================= ОНЛАЙН (MQTT over WebSocket, host-авторитарная модель) ==========
+   Обмен идёт через публичный MQTT-брокер (EMQX / HiveMQ) — никакого P2P и проблем
+   с NAT. Хост — судья: тайминги, тайм-ауты и применение действий считает он.
+   Гость шлёт только намерения. Топики: d2tpb/<код>/h (хост→гость) и /g (гость→хост). */
 const NET = {
-  online:false, isHost:false, side:null, peer:null, conn:null, code:"",
+  online:false, isHost:false, side:null, client:null, code:"",
   seats:{ radiant:{taken:false,name:"",ready:false,owner:null},
           dire:{taken:false,name:"",ready:false,owner:null} },
-  protectsGot:{}
+  protectsGot:{}, seqOut:0, seqIn:0, peerOnline:false, lastSeen:0, pingIv:null, lobbyGot:false
 };
 const defaultName = side => side === "radiant" ? "Radiant" : "Dire";
-function netSend(m){ try{ if (NET.conn && NET.conn.open) NET.conn.send(JSON.stringify(m)); }catch(e){} }
+const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt"];
+const topicOut = ()=> "d2tpb/" + NET.code.toLowerCase() + "/" + (NET.isHost ? "h" : "g");
+const topicIn  = ()=> "d2tpb/" + NET.code.toLowerCase() + "/" + (NET.isHost ? "g" : "h");
+function netSend(m){
+  if (!NET.client || !NET.client.connected) return;
+  m._s = ++NET.seqOut;
+  try{ NET.client.publish(topicOut(), JSON.stringify(m), {qos:1}); }catch(e){}
+}
+function connectBroker(onReady, idx){
+  idx = idx || 0;
+  if (idx >= BROKERS.length){
+    $("lobby-status").textContent = "Не удалось подключиться к серверу — попробуйте позже";
+    return;
+  }
+  let opened = false;
+  const c = mqtt.connect(BROKERS[idx], {
+    clientId: "d2tpb_" + Math.random().toString(36).slice(2, 12),
+    clean: true, connectTimeout: 8000, keepalive: 30, reconnectPeriod: 3000
+  });
+  NET.client = c;
+  c.on("connect", ()=>{
+    if (!opened){
+      opened = true;
+      c.subscribe(topicIn(), {qos:1}, err=>{ if (!err) onReady(); });
+    } else c.subscribe(topicIn(), {qos:1});           // после автопереподключения
+  });
+  c.on("message", (t, payload)=>{
+    let m; try{ m = JSON.parse(payload.toString()); }catch(e){ return; }
+    if (m._s && m._s <= NET.seqIn) return;            // дубликат при QoS 1
+    if (m._s) NET.seqIn = m._s;
+    NET.lastSeen = Date.now();
+    NET.peerOnline = true;
+    onNetData(m);
+  });
+  const fallback = ()=>{ if (!opened){ try{ c.end(true); }catch(e){} connectBroker(onReady, idx + 1); } };
+  c.on("error", fallback);
+  setTimeout(fallback, 9000);
+}
+function startPing(){
+  NET.lastSeen = Date.now();
+  if (NET.pingIv) clearInterval(NET.pingIv);
+  NET.pingIv = setInterval(()=>{
+    netSend({t:"ping"});
+    if (NET.peerOnline && Date.now() - NET.lastSeen > 35000){ NET.peerOnline = false; netLost(); }
+  }, 10000);
+}
 function myTurn(){ return !NET.online || (S.seq[S.idx] && S.seq[S.idx].team === NET.side); }
 function guestSide(){ return ["radiant","dire"].find(s=>NET.seats[s].owner === "guest") || null; }
 function syncMySide(){
@@ -788,43 +834,40 @@ function makeCode(){
   for (let i=0;i<5;i++) s += A[Math.floor(Math.random()*A.length)];
   return s;
 }
-const roomPeerId = code => "d2tpb-" + code.toLowerCase();
-
 function netHost(){
-  if (!window.Peer){ toast("PeerJS не загрузился — проверьте интернет"); return; }
+  if (!window.mqtt){ toast("Библиотека связи не загрузилась — проверьте интернет"); return; }
   NET.online = true; NET.isHost = true; NET.code = makeCode();
   show("scr-lobby"); renderLobby();
-  $("lobby-status").textContent = "Создаём комнату…";
-  NET.peer = new Peer(roomPeerId(NET.code));
-  NET.peer.on("open", ()=>{
-    $("lobby-code").textContent = "КОД: " + NET.code;
+  $("lobby-code").textContent = "КОД: " + NET.code;
+  $("lobby-status").textContent = "Подключаемся к серверу…";
+  connectBroker(()=>{
     $("lobby-status").textContent = "Комната создана. Ожидание соперника…";
+    startPing();
   });
-  NET.peer.on("connection", c=>{
-    if (NET.conn && NET.conn.open){ try{ c.close(); }catch(e){} return; }
-    NET.conn = c;
-    c.on("open", ()=>{ $("lobby-status").textContent = "Соперник подключился"; sendLobby(); });
-    c.on("data", d=>{ try{ onNetData(JSON.parse(d)); }catch(e){} });
-    c.on("close", netLost);
-  });
-  NET.peer.on("error", e=>toast("Ошибка соединения: " + e.type));
 }
 function netJoin(code){
-  if (!window.Peer){ toast("PeerJS не загрузился — проверьте интернет"); return; }
+  if (!window.mqtt){ toast("Библиотека связи не загрузилась — проверьте интернет"); return; }
   code = (code || "").trim().toUpperCase();
   if (code.length < 4){ toast("Введите код комнаты"); return; }
   NET.online = true; NET.isHost = false; NET.code = code;
   show("scr-lobby"); renderLobby();
   $("lobby-code").textContent = "КОД: " + code;
-  $("lobby-status").textContent = "Подключаемся…";
-  NET.peer = new Peer();
-  NET.peer.on("open", ()=>{
-    NET.conn = NET.peer.connect(roomPeerId(code), {reliable:true});
-    NET.conn.on("open", ()=>{ $("lobby-status").textContent = "Подключено. Займите свободную сторону"; netSend({t:"hello"}); });
-    NET.conn.on("data", d=>{ try{ onNetData(JSON.parse(d)); }catch(e){} });
-    NET.conn.on("close", netLost);
+  $("lobby-status").textContent = "Подключаемся к серверу…";
+  connectBroker(()=>{
+    $("lobby-status").textContent = "Ищем комнату…";
+    startPing();
+    let tries = 0;
+    const hi = setInterval(()=>{
+      if (NET.lobbyGot){ clearInterval(hi); return; }
+      if (++tries >= 12){
+        clearInterval(hi);
+        $("lobby-status").textContent = "Комната не отвечает — проверьте код или создайте новую";
+        return;
+      }
+      netSend({t:"hello"});
+    }, 1500);
+    netSend({t:"hello"});
   });
-  NET.peer.on("error", e=>toast(e.type === "peer-unavailable" ? "Комната не найдена" : "Ошибка: " + e.type));
 }
 function netLost(){
   if (!NET.online) return;
@@ -930,9 +973,18 @@ function hostApplyGuestAct(short){
 }
 function onNetData(m){
   switch (m.t){
-    case "hello": if (NET.isHost) sendLobby(); break;
+    case "ping": break;
+    case "hello":
+      if (NET.isHost){
+        if (!NET.peerHello){ NET.peerHello = true; $("lobby-status").textContent = "Соперник подключился"; }
+        sendLobby();
+      }
+      break;
     case "lobby":
-      if (!NET.isHost){ NET.seats = m.seats; S.mode = m.mode; syncMySide(); renderLobby(); }
+      if (!NET.isHost){
+        if (!NET.lobbyGot){ NET.lobbyGot = true; $("lobby-status").textContent = "Подключено. Займите свободную сторону"; }
+        NET.seats = m.seats; S.mode = m.mode; syncMySide(); renderLobby();
+      }
       break;
     case "claim":
       if (NET.isHost && !NET.seats[m.side].taken && !guestSide()){
