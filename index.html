@@ -787,8 +787,9 @@ const topicIn  = ()=> "d2tpb/" + NET.code.toLowerCase() + "/" + (NET.isHost ? "g
 function netSend(m){
   if (!NET.client) return;
   m._s = ++NET.seqOut;
-  try{ NET.client.publish(topicOut(), JSON.stringify(m), {qos:1}); }catch(e){}
-  /* mqtt.js сам буферизует QoS1-публикации при обрыве и дошлёт после реконнекта */
+  /* QoS 0: без inflight-окон и очередей публичного брокера.
+     Потери чинятся на уровне приложения: снапшоты хоста + ретраи гостя. */
+  try{ NET.client.publish(topicOut(), JSON.stringify(m), {qos:0}); }catch(e){}
 }
 function connectBroker(onReady, idx){
   idx = idx || 0;
@@ -798,22 +799,21 @@ function connectBroker(onReady, idx){
   }
   let opened = false;
   const c = mqtt.connect(BROKERS[idx], {
-    /* стабильный clientId + clean:false = устойчивая сессия: брокер хранит
-       QoS1-сообщения, пока клиент офлайн (фоновые вкладки, обрывы сети).
-       timerVariant "worker": keepalive-пинги идут из Web Worker, который
-       Chrome НЕ троттлит в фоновой вкладке — соединение не умирает молча. */
-    clientId: "d2tpb_" + NET.code.toLowerCase() + "_" + (NET.isHost ? "h" : "g"),
-    clean: false, connectTimeout: 8000, keepalive: 20, reconnectPeriod: 2000,
+    /* timerVariant "worker": keepalive-пинги идут из Web Worker, который
+       Chrome НЕ троттлит в фоновой вкладке — соединение не умирает молча.
+       Сессия чистая, QoS 0 — восстановление на уровне приложения. */
+    clientId: "d2tpb_" + Math.random().toString(36).slice(2, 12),
+    clean: true, connectTimeout: 8000, keepalive: 20, reconnectPeriod: 2000,
     protocolVersion: 4, timerVariant: "worker"
   });
   NET.client = c;
   c.on("connect", ()=>{
     if (!opened){
       opened = true;
-      c.subscribe(topicIn(), {qos:1}, err=>{ if (!err) onReady(); });
+      c.subscribe(topicIn(), {qos:0}, err=>{ if (!err) onReady(); });
     } else {
-      c.subscribe(topicIn(), {qos:1});                 // после автопереподключения
-      if (NET.isHost) sendLobby();
+      c.subscribe(topicIn(), {qos:0});                 // после автопереподключения
+      if (NET.isHost){ sendLobby(); hostSnap(); }
       else if (!NET.lobbyGot) netSend({t:"hello"});
     }
   });
