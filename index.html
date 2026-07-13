@@ -774,7 +774,11 @@ const NET = {
   online:false, isHost:false, side:null, client:null, code:"",
   seats:{ radiant:{taken:false,name:"",ready:false,owner:null},
           dire:{taken:false,name:"",ready:false,owner:null} },
-  protectsGot:{}, seqOut:0, seqIn:0, peerOnline:false, lastSeen:0, pingIv:null, lobbyGot:false
+  protectsGot:{}, seqOut:0, seqIn:0, peerOnline:false, lastSeen:0, pingIv:null, lobbyGot:false,
+  /* самовосстановление: хост ведёт лог действий и шлёт снапшоты, гость догоняет */
+  stage:"lobby", actLog:[], applyN:0, snapIv:null, actRetry:null,
+  wantSeat:null, wantReady:null, wantName:"", retryIv:null,
+  coinShown:false, draftInited:false, protSent:false
 };
 const defaultName = side => side === "radiant" ? "Radiant" : "Dire";
 const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt"];
@@ -846,6 +850,55 @@ function makeCode(){
   for (let i=0;i<5;i++) s += A[Math.floor(Math.random()*A.length)];
   return s;
 }
+/* ---- снапшот всего состояния (хост, каждые 3 с) — чинит любые потери сообщений ---- */
+function hostSnap(){
+  if (!NET.isHost || !NET.client) return;
+  const m = {t:"snap", stage:NET.stage, seats:NET.seats, mode:S.mode};
+  if (NET.stage !== "lobby"){
+    m.firstPick = S.firstPick; m.names = S.names;
+    m.pool = S.pool ? [...S.pool] : null;
+  }
+  if (NET.stage === "draft" || NET.stage === "end"){
+    m.prot = S.protectedBy; m.log = NET.actLog;
+    m.reserves = {radiant:S.reserves.radiant, dire:S.reserves.dire};
+    m.paused = S.paused;
+  }
+  netSend(m);
+}
+function guestApplySnap(m){
+  NET.seats = m.seats;
+  if (!NET.lobbyGot){ NET.lobbyGot = true; $("lobby-status").textContent = "Подключено. Займите свободную сторону"; }
+  S.mode = m.mode; syncMySide();
+  if (m.stage === "lobby"){ if ($("scr-lobby") && !$("scr-lobby").classList.contains("hidden")) renderLobby(); return; }
+  if (!S.firstPick){
+    S.names = m.names; S.firstPick = m.firstPick;
+    S.pool = m.pool ? new Set(m.pool) : null;
+  }
+  if (m.stage === "protect"){ if (!NET.coinShown) onlineCoin(); return; }
+  /* stage draft | end */
+  if (!NET.draftInited){
+    if (m.prot) S.protectedBy = m.prot;
+    initDraft();
+  }
+  if (m.log){
+    const done = NET.applyN + netQueue.length;
+    for (let i = done; i < m.log.length; i++)
+      netQueue.push({i, short: m.log[i], reserves: m.reserves});
+    if (netQueue.length) drainApplied();
+  }
+  if (m.paused !== undefined && m.paused !== S.paused && S.active){
+    if (m.paused) doPause(true); else doResume(true);
+  }
+}
+/* ---- ретраи гостя в лобби: клейм/готовность доходят даже при потерях ---- */
+function guestLobbyRetry(){
+  if (NET.isHost) return;
+  if (NET.draftInited){ clearInterval(NET.retryIv); return; }
+  if (NET.wantSeat && !NET.side) netSend({t:"claim", side:NET.wantSeat});
+  else if (NET.side && NET.wantReady && !NET.seats[NET.side].ready)
+    netSend({t:"ready", side:NET.side, name:NET.wantName});
+  else if (NET.protSent) netSend({t:"protect", side:NET.side, heroes:NET.protHeroes || []});
+}
 function netHost(){
   if (!window.mqtt){ toast("Библиотека связи не загрузилась — проверьте интернет"); return; }
   NET.online = true; NET.isHost = true; NET.code = makeCode();
@@ -855,6 +908,8 @@ function netHost(){
   connectBroker(()=>{
     $("lobby-status").textContent = "Комната создана. Ожидание соперника…";
     startPing();
+    if (NET.snapIv) clearInterval(NET.snapIv);
+    NET.snapIv = setInterval(hostSnap, 3000);
   });
 }
 function netJoin(code){
@@ -868,6 +923,8 @@ function netJoin(code){
   connectBroker(()=>{
     $("lobby-status").textContent = "Ищем комнату…";
     startPing();
+    if (NET.retryIv) clearInterval(NET.retryIv);
+    NET.retryIv = setInterval(guestLobbyRetry, 2500);
     let tries = 0;
     const hi = setInterval(()=>{
       if (NET.lobbyGot){ clearInterval(hi); return; }
@@ -915,27 +972,34 @@ function renderLobby(){
       if (NET.isHost){
         NET.seats[side] = {taken:true, name:"", ready:false, owner:"host"};
         syncMySide(); renderLobby(); sendLobby();
-      } else netSend({t:"claim", side});
+      } else { NET.wantSeat = side; netSend({t:"claim", side}); }
     } else if (NET.side === side && !st.ready){
       const nm = ($("seat-name-"+side).value.trim() || defaultName(side)).slice(0,24);
       if (NET.isHost){
         st.name = nm; st.ready = true;
         renderLobby(); sendLobby(); maybeStartOnline();
-      } else netSend({t:"ready", side, name:nm});
+      } else {
+        NET.wantReady = true; NET.wantName = nm;
+        netSend({t:"ready", side, name:nm});
+      }
     }
   });
 });
 function maybeStartOnline(){
   const r = NET.seats.radiant, d = NET.seats.dire;
-  if (!(r.ready && d.ready)) return;
+  if (!(r.ready && d.ready) || NET.stage !== "lobby") return;
+  NET.stage = "protect";
   S.names.radiant = r.name || "Radiant"; S.names.dire = d.name || "Dire";
   S.firstPick = Math.random() < 0.5 ? "radiant" : "dire";
   if (S.mode === "cd") genPool();
   netSend({t:"begin", firstPick:S.firstPick, pool:S.pool ? [...S.pool] : null,
            names:{radiant:S.names.radiant, dire:S.names.dire}, mode:S.mode});
+  hostSnap();
   onlineCoin();
 }
 function onlineCoin(){
+  if (NET.coinShown) return;
+  NET.coinShown = true;
   show("scr-coin");
   $("btn-flip").classList.add("hidden");
   $("coin-result").classList.add("hidden");
@@ -956,23 +1020,34 @@ function submitProtectOnline(){
   $("btn-protect-ok").disabled = true;
   $("protect-cnt").textContent = "Ожидание соперника…";
   if (NET.isHost){ NET.protectsGot[NET.side] = [...protectSel]; checkProtects(); }
-  else netSend({t:"protect", side:NET.side, heroes:[...protectSel]});
+  else {
+    NET.protSent = true; NET.protHeroes = [...protectSel];
+    netSend({t:"protect", side:NET.side, heroes:[...protectSel]});
+  }
 }
 function checkProtects(){
-  if (!NET.protectsGot.radiant || !NET.protectsGot.dire) return;
+  if (!NET.protectsGot.radiant || !NET.protectsGot.dire || NET.draftInited) return;
   S.protectedBy = {radiant:[...NET.protectsGot.radiant], dire:[...NET.protectsGot.dire]};
   netSend({t:"protects", p:S.protectedBy});
   initDraft();
+  hostSnap();
 }
-/* очередь применённых действий у гостя: ждём, пока отыграет реплика героя */
+/* очередь применённых действий у гостя: ждём, пока отыграет реплика героя.
+   Каждое действие имеет индекс i — дубликаты и пропуски отсекаются, пропуски
+   доезжают со снапшотом хоста. */
 const netQueue = [];
-function queueApplied(m){ netQueue.push(m); drainApplied(); }
+function queueApplied(m){
+  const next = NET.applyN + netQueue.length;
+  if (m.i === undefined || m.i === next) { netQueue.push(m); drainApplied(); }
+  /* m.i < next — дубликат; m.i > next — пропуск, восстановится из снапшота */
+}
 function drainApplied(){
   if (!netQueue.length) return;
-  if (S.between || S.resolving){ setTimeout(drainApplied, 120); return; }
+  if (S.between || S.resolving || !S.active){ setTimeout(drainApplied, 120); return; }
   const m = netQueue.shift();
+  NET.applyN++;
   lockIn(m.short);
-  S.reserves = m.reserves; updateReserveLabels();
+  if (m.reserves){ S.reserves = m.reserves; updateReserveLabels(); }
   if (netQueue.length) setTimeout(drainApplied, 150);
 }
 function hostApplyGuestAct(short){
@@ -1026,6 +1101,7 @@ function onNetData(m){
       break;
     case "act": if (NET.isHost) hostApplyGuestAct(m.short); break;
     case "applied": if (!NET.isHost) queueApplied(m); break;
+    case "snap": if (!NET.isHost) guestApplySnap(m); break;
     case "pause": doPause(true); break;
     case "resume": doResume(true); break;
   }
@@ -1140,6 +1216,11 @@ $("btn-protect-ok").addEventListener("click", ()=>{
 /* ---------- ДРАФТ ---------- */
 let draftEls = {}, seqEls = [];
 function initDraft(){
+  if (NET.online){
+    if (NET.draftInited) return;
+    NET.draftInited = true;
+    if (NET.isHost) NET.stage = "draft";
+  }
   const R = RULES[S.mode];
   S.seq = buildSeq(S.mode, S.firstPick);
   S.idx = -1;
@@ -1333,6 +1414,13 @@ function submitAction(short){
   if (NET.online && !NET.isHost){                    // гость шлёт намерение хосту
     netSend({t:"act", short});
     $("btn-lock").disabled = true;
+    /* ретраим, пока хост не применит (страховка от потери сообщения) */
+    const atIdx = S.idx; let tries = 0;
+    clearInterval(NET.actRetry);
+    NET.actRetry = setInterval(()=>{
+      if (S.idx !== atIdx || !S.active || ++tries > 10){ clearInterval(NET.actRetry); return; }
+      netSend({t:"act", short});
+    }, 2000);
     return;
   }
   lockIn(short);
@@ -1365,8 +1453,11 @@ function lockIn(short){
     S.reserves[act.team] = Math.max(0, (S.clock.endTs - now) / 1000);
   S.clock = null;
   updateReserveLabels();
-  if (NET.online && NET.isHost)
-    netSend({t:"applied", short, reserves:{radiant:S.reserves.radiant, dire:S.reserves.dire}});
+  if (NET.online && NET.isHost){
+    NET.actLog.push(short);
+    netSend({t:"applied", i:NET.actLog.length - 1, short,
+             reserves:{radiant:S.reserves.radiant, dire:S.reserves.dire}});
+  }
 
   if (act.type === "ban"){
     S.bans[act.team].push(short);
@@ -1450,6 +1541,7 @@ $("btn-sound").addEventListener("click", ()=>{
 /* ---------- ФИНАЛ ---------- */
 function endDraft(){
   S.active = false;
+  if (NET.online && NET.isHost) NET.stage = "end";
   if (S.timerId) clearInterval(S.timerId);
   $("ct-action").textContent = "ДРАФТ ЗАВЕРШЁН"; $("ct-action").className = "ct-action";
   $("ct-time").textContent = "—"; $("ct-sub").textContent = "";
