@@ -234,6 +234,24 @@ button{font-family:inherit; cursor:pointer;}
 .end-picks img{width:210px; border-radius:4px; border:1px solid #2a3646; display:block;}
 .vs-label{font-family:'Oswald'; font-size:52px; color:var(--gold); letter-spacing:.1em; font-weight:700; text-shadow:0 0 26px rgba(200,170,110,.5);}
 .end-note{color:var(--dim); font-size:14px; letter-spacing:.08em;}
+#scr-end{overflow-y:auto; padding:30px 0;}
+.prob-row{display:flex; align-items:center; gap:12px;}
+.prob-lbl{font-family:'Oswald'; font-size:20px; font-weight:700; min-width:140px;}
+.prob-lbl.radiant{color:var(--radiant-br); text-align:right;}
+.prob-lbl.dire{color:var(--dire-br);}
+.prob-bar{flex:1; height:18px; background:linear-gradient(180deg,#3a1512,#2a100c); border:1px solid #55231c; border-radius:9px; overflow:hidden;}
+#prob-fill{height:100%; width:50%; background:linear-gradient(90deg,#4f7a1e,#93c53b); transition:width .8s ease;}
+.prob-note{text-align:center; margin-top:8px; color:var(--dim); font-size:13px; letter-spacing:.05em;}
+.cover-wrap{display:flex; gap:14px; margin-top:14px; flex-wrap:wrap; justify-content:center;}
+.cover-team{flex:1 1 320px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:10px 12px; font-size:13px; color:#b9c4d2;}
+.cover-team.radiant{border-top:2px solid var(--radiant);}
+.cover-team.dire{border-top:2px solid var(--dire);}
+.cover-team b{color:#e8eef5; letter-spacing:.06em;}
+.cv-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.cv{padding:3px 8px; border-radius:3px; background:#0d1319; border:1px solid var(--line); font-size:12px;}
+.cv.ok{color:#a5d76a; border-color:#3c5518;}
+.cv.no{color:#8b5a52; border-color:#4a2620;}
+.an-note{margin-top:6px; font-size:11px; color:#54637a; letter-spacing:.06em; text-align:center;}
 .footer-note{margin-top:14px; font-size:11px; color:#54637a; letter-spacing:.08em; text-align:center; line-height:1.6;}
 /* онлайн */
 .net-row{display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;}
@@ -289,7 +307,7 @@ button{font-family:inherit; cursor:pointer;}
       Кто ходит первым — решает монетка. Если время действия истекло, тратится резервное время; когда и оно закончится —
       бан пропускается, а пик выбирается случайно (как в игре).
     </div>
-    <button class="btn-main" id="btn-setup-next">Драфт на этом компьютере</button>
+    <button class="btn-main" id="btn-setup-next">Тренировка</button>
     <div class="net-row">
       <button class="btn-main btn-gold" id="btn-net-host">Создать онлайн-комнату</button>
       <input id="net-code" placeholder="КОД" maxlength="8" spellcheck="false">
@@ -408,6 +426,17 @@ button{font-family:inherit; cursor:pointer;}
     <div class="end-team dire"><h3 id="end-name-dire"></h3><div class="end-picks" id="end-picks-dire"></div></div>
   </div>
   <div class="end-note" id="end-note"></div>
+  <div id="an-loading" class="an-note">Считаем шансы победы по данным OpenDota…</div>
+  <div id="an-box" class="hidden" style="width:min(760px,94vw)">
+    <div class="prob-row">
+      <span id="prob-left" class="prob-lbl radiant"></span>
+      <div class="prob-bar"><div id="prob-fill"></div></div>
+      <span id="prob-right" class="prob-lbl dire"></span>
+    </div>
+    <div class="prob-note" id="prob-note"></div>
+    <div id="cover-wrap" class="cover-wrap"></div>
+    <div class="an-note">Модель: актуальные винрейты Turbo текущего патча + контрпики + закрытие ролей · данные OpenDota</div>
+  </div>
   <div style="display:flex; gap:14px; align-items:center">
     <button class="btn-main btn-gold" id="btn-save-img" title="Один клик — картинка пиков. Тройной клик — полная картинка с банами в порядке драфта">Сохранить</button>
     <button class="btn-main" id="btn-again">Новый драфт</button>
@@ -1597,6 +1626,7 @@ function endDraft(){
     `${S.mode === "cm" ? "Captains Mode" : "Captains Draft"} · первый пик: ${S.names[S.firstPick]}` +
     ` · банов: ${S.bans.radiant.filter(Boolean).length + S.bans.dire.filter(Boolean).length}`;
   prefetchExport();
+  runAnalytics();
   setTimeout(()=>$("scr-end").classList.remove("hidden"), 900);
 }
 /* ---------- ЭКСПОРТ КАРТИНКИ ----------
@@ -1712,6 +1742,87 @@ $("btn-save-img").addEventListener("click", ()=>{
     saveDraftImage(full).catch(()=>toast("Не удалось сохранить картинку — проверьте интернет"));
   }, 430);
 });
+
+/* ---------- АНАЛИТИКА ДРАФТА (OpenDota, бесплатно, текущий патч) ----------
+   Вероятность победы: логистическая модель из трёх слагаемых —
+   1) сумма отклонений Turbo-винрейтов героев от 50%,
+   2) контрпики: матчапы каждого героя Radiant против каждого пика Dire,
+   3) закрытие ключевых функций драфта (роли OpenDota). */
+async function runAnalytics(){
+  const load = $("an-loading"), box = $("an-box");
+  load.textContent = "Считаем шансы победы по данным OpenDota…";
+  load.classList.remove("hidden"); box.classList.add("hidden");
+  try{
+    const [stats, meta] = await Promise.all([
+      fetch("https://api.opendota.com/api/heroStats").then(r=>r.json()),
+      fetch("https://api.opendota.com/api/heroes").then(r=>r.json())
+    ]);
+    const od = {}; stats.forEach(h=>od[h.name.replace("npc_dota_hero_","")] = h);
+    const metaById = {}; meta.forEach(h=>metaById[h.id] = h);
+    const wrOf = s=>{
+      const h = od[s]; if (!h) return 0.5;
+      if (h.turbo_picks > 100) return h.turbo_wins / h.turbo_picks;
+      if (h.pub_pick > 100) return h.pub_win / h.pub_pick;
+      return 0.5;
+    };
+    const R = S.picks.radiant, D = S.picks.dire;
+    const baseR = R.reduce((a,s)=>a + (wrOf(s) - 0.5), 0);
+    const baseD = D.reduce((a,s)=>a + (wrOf(s) - 0.5), 0);
+
+    /* контрпики: матчапы героев Radiant против пиков Dire */
+    const direIds = new Set(D.map(s=>od[s] && od[s].id).filter(Boolean));
+    const mus = await Promise.all(R.map(s=>{
+      const h = od[s]; if (!h) return Promise.resolve(null);
+      return fetch("https://api.opendota.com/api/heroes/" + h.id + "/matchups")
+        .then(r=>r.json()).catch(()=>null);
+    }));
+    let matchup = 0, pairs = 0;
+    R.forEach((s, i)=>{
+      const mu = mus[i]; if (!mu) return;
+      const base = wrOf(s);
+      mu.forEach(m=>{
+        if (!direIds.has(m.hero_id) || m.games_played < 25) return;
+        matchup += Math.max(-0.08, Math.min(0.08, m.wins / m.games_played - base));
+        pairs++;
+      });
+    });
+
+    /* закрытие функций драфта */
+    const FUNCS = [["Carry","Кор"],["Disabler","Контроль"],["Initiator","Инициация"],
+                   ["Durable","Стойкость"],["Support","Саппорт"],["Escape","Мобильность"]];
+    const coverage = team=>{
+      const roles = new Set(); let ranged = 0;
+      team.forEach(s=>{
+        const h = od[s], m = h && metaById[h.id]; if (!m) return;
+        (m.roles || []).forEach(r=>roles.add(r));
+        if (m.attack_type === "Ranged") ranged++;
+      });
+      return {roles, ranged, covered: FUNCS.filter(f=>roles.has(f[0])).length};
+    };
+    const covR = coverage(R), covD = coverage(D);
+
+    const x = (baseR - baseD) + matchup + 0.012 * (covR.covered - covD.covered);
+    const pct = Math.round(100 / (1 + Math.exp(-4 * x)));
+
+    $("prob-left").textContent  = S.names.radiant + " " + pct + "%";
+    $("prob-right").textContent = (100 - pct) + "% " + S.names.dire;
+    $("prob-fill").style.width = pct + "%";
+    const f = v => (v > 0 ? "+" : "") + (v * 100).toFixed(1) + " п.п. к Radiant";
+    $("prob-note").textContent =
+      `Винрейты Turbo: ${f(baseR - baseD)} · контрпики (${pairs} пар): ${f(matchup)} · функции: ${covR.covered} против ${covD.covered}`;
+    const covHtml = (nm, cov, side)=>
+      `<div class="cover-team ${side}"><b>${nm}</b> · закрыто ${cov.covered}/6 функций · дальников: ${cov.ranged}/5
+         <div class="cv-list">${FUNCS.map(fn=>{
+            const ok = cov.roles.has(fn[0]);
+            return `<span class="cv ${ok ? "ok" : "no"}">${ok ? "✓" : "—"} ${fn[1]}</span>`;
+         }).join("")}</div></div>`;
+    $("cover-wrap").innerHTML = covHtml(S.names.radiant, covR, "radiant") + covHtml(S.names.dire, covD, "dire");
+    load.classList.add("hidden");
+    box.classList.remove("hidden");
+  }catch(e){
+    load.textContent = "Аналитика недоступна — OpenDota не отвечает";
+  }
+}
 
 $("btn-copy").addEventListener("click", ()=>{
   const line = t => S.picks[t].map(s=>byId[s][1]).join(", ");
