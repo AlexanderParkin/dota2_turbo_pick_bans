@@ -1776,16 +1776,22 @@ async function runAnalytics(){
       return fetch("https://api.opendota.com/api/heroes/" + h.id + "/matchups")
         .then(r=>r.json()).catch(()=>null);
     }));
-    let matchup = 0, pairs = 0;
+    let advSum = 0, pairs = 0;
     R.forEach((s, i)=>{
-      const mu = mus[i]; if (!mu) return;
-      const base = wrOf(s);
+      const mu = mus[i]; if (!mu || !mu.length) return;
+      /* база — средний винрейт героя по САМОЙ выборке матчапов,
+         чтобы не смешивать её с Turbo-статистикой (разные датасеты) */
+      let tg = 0, tw = 0;
+      mu.forEach(m=>{ tg += m.games_played; tw += m.wins; });
+      const baseMu = tg ? tw / tg : 0.5;
       mu.forEach(m=>{
         if (!direIds.has(m.hero_id) || m.games_played < 25) return;
-        matchup += Math.max(-0.08, Math.min(0.08, m.wins / m.games_played - base));
+        advSum += Math.max(-0.08, Math.min(0.08, m.wins / m.games_played - baseMu));
         pairs++;
       });
     });
+    /* среднее преимущество пары × 5 героев, с ограничением */
+    const matchup = pairs ? Math.max(-0.12, Math.min(0.12, (advSum / pairs) * 5)) : 0;
 
     /* закрытие функций драфта */
     const FUNCS = [["Carry","Кор"],["Disabler","Контроль"],["Initiator","Инициация"],
