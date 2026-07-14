@@ -1826,7 +1826,9 @@ async function runAnalytics(){
     load.classList.add("hidden");
     box.classList.remove("hidden");
   }catch(e){
-    load.textContent = "Аналитика недоступна — OpenDota не отвечает";
+    load.textContent = "Аналитика недоступна (лимит OpenDota) — нажмите здесь, чтобы повторить";
+    load.style.cursor = "pointer";
+    load.onclick = ()=>{ load.onclick = null; load.style.cursor = ""; runAnalytics(); };
   }
 }
 
