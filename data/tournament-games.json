@@ -2,23 +2,2093 @@
   "schema_version": 1,
   "games": [
     {
-      "id": "kittens-vs-dogs-1",
-      "teams": { "radiant": "Котята", "dire": "Пес Дюк" },
-      "game": { "mode": "Turbo", "duration": "21:02", "duration_seconds": 1262, "score": { "radiant": 0, "dire": 39 }, "winner": "Dire" },
+      "id": "j4-vs-allseeing-1",
+      "teams": {
+        "radiant": "J4",
+        "dire": "Всефидящие"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "47:47",
+        "duration_seconds": 2867,
+        "score": {
+          "radiant": 42,
+          "dire": 36
+        },
+        "winner": "Dire"
+      },
       "players": {
         "radiant": [
-          { "nickname": "головорез97 [NGR0d]", "hero": "Necrophos", "kda": { "kills": 0, "deaths": 17, "assists": 0 }, "gold": 15066 },
-          { "nickname": "anitkacs [PRMIR]", "hero": "Lich", "kda": { "kills": 0, "deaths": 10, "assists": 0 }, "gold": 5743 },
-          { "nickname": "epremches", "hero": "Axe", "kda": { "kills": 0, "deaths": 8, "assists": 0 }, "gold": 9810 },
-          { "nickname": "Chop Chop", "hero": "Sniper", "kda": { "kills": 0, "deaths": 7, "assists": 0 }, "gold": 14607 },
-          { "nickname": "eclipse [-Arma]", "hero": "Spirit Breaker", "kda": { "kills": 0, "deaths": 7, "assists": 0 }, "gold": 9291 }
+          {
+            "nickname": "123",
+            "hero": "Invoker",
+            "kda": {
+              "kills": 9,
+              "deaths": 3,
+              "assists": 24
+            },
+            "gold": 51552
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 9,
+              "deaths": 5,
+              "assists": 17
+            },
+            "gold": 50367
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Witch Doctor",
+            "kda": {
+              "kills": 10,
+              "deaths": 10,
+              "assists": 19
+            },
+            "gold": 35072
+          },
+          {
+            "nickname": "squall",
+            "hero": "Skywrath Mage",
+            "kda": {
+              "kills": 5,
+              "deaths": 8,
+              "assists": 13
+            },
+            "gold": 25302
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Tidehunter",
+            "kda": {
+              "kills": 9,
+              "deaths": 10,
+              "assists": 21
+            },
+            "gold": 31051
+          }
         ],
         "dire": [
-          { "nickname": "Магистр стиралки [ПЫЛ]", "hero": "Winter Wyvern", "kda": { "kills": 9, "deaths": 0, "assists": 17 }, "gold": 24063 },
-          { "nickname": "DAI MNE SILU", "hero": "Magnus", "kda": { "kills": 2, "deaths": 0, "assists": 17 }, "gold": 18138 },
-          { "nickname": "ZED [РАЙ]", "hero": "Phantom Assassin", "kda": { "kills": 14, "deaths": 0, "assists": 10 }, "gold": 32271 },
-          { "nickname": "ЖЕНЯ ДАНЖЕР", "hero": "Rubick", "kda": { "kills": 10, "deaths": 0, "assists": 10 }, "gold": 20805 },
-          { "nickname": "Chief Penetrator [PRMIR]", "hero": "Chaos Knight", "kda": { "kills": 4, "deaths": 0, "assists": 14 }, "gold": 21455 }
+          {
+            "nickname": "@katanaflow",
+            "hero": "Anti-Mage",
+            "kda": {
+              "kills": 13,
+              "deaths": 3,
+              "assists": 9
+            },
+            "gold": 57605
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Lifestealer",
+            "kda": {
+              "kills": 7,
+              "deaths": 8,
+              "assists": 13
+            },
+            "gold": 62681
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Jakiro",
+            "kda": {
+              "kills": 2,
+              "deaths": 12,
+              "assists": 19
+            },
+            "gold": 32104
+          },
+          {
+            "nickname": "BaHa [CBO]",
+            "hero": "Lion",
+            "kda": {
+              "kills": 4,
+              "deaths": 12,
+              "assists": 19
+            },
+            "gold": 33960
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 10,
+              "deaths": 7,
+              "assists": 16
+            },
+            "gold": 53984
+          }
+        ]
+      }
+    },
+    {
+      "id": "j4-vs-allseeing-2",
+      "teams": {
+        "radiant": "Всефидящие",
+        "dire": "J4"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "19:59",
+        "duration_seconds": 1199,
+        "score": {
+          "radiant": 26,
+          "dire": 16
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "местная табуретка",
+            "hero": "Legion Commander",
+            "kda": {
+              "kills": 2,
+              "deaths": 2,
+              "assists": 18
+            },
+            "gold": 19390
+          },
+          {
+            "nickname": "BaHa [CBO]",
+            "hero": "Pudge",
+            "kda": {
+              "kills": 6,
+              "deaths": 4,
+              "assists": 13
+            },
+            "gold": 18730
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Zeus",
+            "kda": {
+              "kills": 3,
+              "deaths": 4,
+              "assists": 15
+            },
+            "gold": 14301
+          },
+          {
+            "nickname": "@katanaflow",
+            "hero": "Void Spirit",
+            "kda": {
+              "kills": 10,
+              "deaths": 2,
+              "assists": 6
+            },
+            "gold": 31848
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Sand King",
+            "kda": {
+              "kills": 5,
+              "deaths": 4,
+              "assists": 9
+            },
+            "gold": 24584
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "123",
+            "hero": "Keeper of the Light",
+            "kda": {
+              "kills": 4,
+              "deaths": 6,
+              "assists": 6
+            },
+            "gold": 18084
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Silencer",
+            "kda": {
+              "kills": 2,
+              "deaths": 6,
+              "assists": 9
+            },
+            "gold": 9386
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Axe",
+            "kda": {
+              "kills": 4,
+              "deaths": 7,
+              "assists": 3
+            },
+            "gold": 13082
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 3,
+              "deaths": 4,
+              "assists": 2
+            },
+            "gold": 11216
+          },
+          {
+            "nickname": "squall",
+            "hero": "Windranger",
+            "kda": {
+              "kills": 2,
+              "deaths": 3,
+              "assists": 4
+            },
+            "gold": 9550
+          }
+        ]
+      }
+    },
+    {
+      "id": "j4-vs-allseeing-3",
+      "teams": {
+        "radiant": "J4",
+        "dire": "Всефидящие"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "22:01",
+        "duration_seconds": 1321,
+        "score": {
+          "radiant": 33,
+          "dire": 43
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "123",
+            "hero": "Pudge",
+            "kda": {
+              "kills": 13,
+              "deaths": 9,
+              "assists": 10
+            },
+            "gold": 26848
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Witch Doctor",
+            "kda": {
+              "kills": 6,
+              "deaths": 10,
+              "assists": 15
+            },
+            "gold": 18719
+          },
+          {
+            "nickname": "squall",
+            "hero": "Nature's Prophet",
+            "kda": {
+              "kills": 5,
+              "deaths": 5,
+              "assists": 12
+            },
+            "gold": 24016
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Viper",
+            "kda": {
+              "kills": 6,
+              "deaths": 12,
+              "assists": 19
+            },
+            "gold": 20360
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 6
+            },
+            "gold": 19570
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "@katanaflow",
+            "hero": "Slark",
+            "kda": {
+              "kills": 13,
+              "deaths": 6,
+              "assists": 8
+            },
+            "gold": 29511
+          },
+          {
+            "nickname": "BaHa [CBO]",
+            "hero": "Ember Spirit",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 17
+            },
+            "gold": 21119
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Zeus",
+            "kda": {
+              "kills": 8,
+              "deaths": 6,
+              "assists": 21
+            },
+            "gold": 23269
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Sand King",
+            "kda": {
+              "kills": 7,
+              "deaths": 10,
+              "assists": 11
+            },
+            "gold": 27165
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Snapfire",
+            "kda": {
+              "kills": 9,
+              "deaths": 4,
+              "assists": 14
+            },
+            "gold": 28168
+          }
+        ]
+      }
+    },
+    {
+      "id": "dogs-vs-j4-1",
+      "teams": {
+        "radiant": "Пес Дюк",
+        "dire": "J4"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "33:03",
+        "duration_seconds": 1983,
+        "score": {
+          "radiant": 25,
+          "dire": 29
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Jakiro",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 11
+            },
+            "gold": 20866
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Earthshaker",
+            "kda": {
+              "kills": 5,
+              "deaths": 8,
+              "assists": 10
+            },
+            "gold": 31140
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Snapfire",
+            "kda": {
+              "kills": 9,
+              "deaths": 4,
+              "assists": 8
+            },
+            "gold": 25651
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Terrorblade",
+            "kda": {
+              "kills": 5,
+              "deaths": 4,
+              "assists": 6
+            },
+            "gold": 28674
+          },
+          {
+            "nickname": "nmf",
+            "hero": "Ogre Magi",
+            "kda": {
+              "kills": 3,
+              "deaths": 6,
+              "assists": 9
+            },
+            "gold": 36001
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "123",
+            "hero": "Lina",
+            "kda": {
+              "kills": 9,
+              "deaths": 6,
+              "assists": 16
+            },
+            "gold": 34420
+          },
+          {
+            "nickname": "@katanaflow",
+            "hero": "Beastmaster",
+            "kda": {
+              "kills": 7,
+              "deaths": 4,
+              "assists": 16
+            },
+            "gold": 25546
+          },
+          {
+            "nickname": "squall",
+            "hero": "Pugna",
+            "kda": {
+              "kills": 1,
+              "deaths": 8,
+              "assists": 9
+            },
+            "gold": 16372
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 8,
+              "deaths": 4,
+              "assists": 7
+            },
+            "gold": 43862
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Tidehunter",
+            "kda": {
+              "kills": 3,
+              "deaths": 3,
+              "assists": 17
+            },
+            "gold": 27495
+          }
+        ]
+      }
+    },
+    {
+      "id": "dogs-vs-j4-2",
+      "teams": {
+        "radiant": "J4",
+        "dire": "Пес Дюк"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "29:13",
+        "duration_seconds": 1753,
+        "score": {
+          "radiant": 10,
+          "dire": 28
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "squall",
+            "hero": "Pugna",
+            "kda": {
+              "kills": 0,
+              "deaths": 7,
+              "assists": 8
+            },
+            "gold": 13086
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Tidehunter",
+            "kda": {
+              "kills": 0,
+              "deaths": 4,
+              "assists": 8
+            },
+            "gold": 18483
+          },
+          {
+            "nickname": "123",
+            "hero": "Tinker",
+            "kda": {
+              "kills": 6,
+              "deaths": 4,
+              "assists": 3
+            },
+            "gold": 28784
+          },
+          {
+            "nickname": "@katanaflow",
+            "hero": "Vengeful Spirit",
+            "kda": {
+              "kills": 1,
+              "deaths": 5,
+              "assists": 10
+            },
+            "gold": 20448
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 3,
+              "deaths": 8,
+              "assists": 1
+            },
+            "gold": 24093
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Earthshaker",
+            "kda": {
+              "kills": 10,
+              "deaths": 2,
+              "assists": 16
+            },
+            "gold": 40516
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Doom",
+            "kda": {
+              "kills": 5,
+              "deaths": 2,
+              "assists": 8
+            },
+            "gold": 27158
+          },
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Jakiro",
+            "kda": {
+              "kills": 2,
+              "deaths": 4,
+              "assists": 8
+            },
+            "gold": 22408
+          },
+          {
+            "nickname": "nmf",
+            "hero": "Ogre Magi",
+            "kda": {
+              "kills": 3,
+              "deaths": 2,
+              "assists": 10
+            },
+            "gold": 26931
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Phantom Lancer",
+            "kda": {
+              "kills": 7,
+              "deaths": 0,
+              "assists": 5
+            },
+            "gold": 43267
+          }
+        ]
+      }
+    },
+    {
+      "id": "allseeing-vs-dogs-1",
+      "teams": {
+        "radiant": "Пес Дюк",
+        "dire": "Всефидящие"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "31:25",
+        "duration_seconds": 1885,
+        "score": {
+          "radiant": 29,
+          "dire": 26
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Ogre Magi",
+            "kda": {
+              "kills": 3,
+              "deaths": 5,
+              "assists": 17
+            },
+            "gold": 17381
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Necrophos",
+            "kda": {
+              "kills": 10,
+              "deaths": 5,
+              "assists": 9
+            },
+            "gold": 28025
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Spectre",
+            "kda": {
+              "kills": 3,
+              "deaths": 3,
+              "assists": 17
+            },
+            "gold": 33145
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Weaver",
+            "kda": {
+              "kills": 10,
+              "deaths": 4,
+              "assists": 11
+            },
+            "gold": 29087
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Undying",
+            "kda": {
+              "kills": 3,
+              "deaths": 9,
+              "assists": 17
+            },
+            "gold": 18738
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "@katanaflow",
+            "hero": "Skywrath Mage",
+            "kda": {
+              "kills": 8,
+              "deaths": 4,
+              "assists": 10
+            },
+            "gold": 38241
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Snapfire",
+            "kda": {
+              "kills": 7,
+              "deaths": 7,
+              "assists": 13
+            },
+            "gold": 23155
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Ursa",
+            "kda": {
+              "kills": 11,
+              "deaths": 6,
+              "assists": 9
+            },
+            "gold": 41196
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Slark",
+            "kda": {
+              "kills": 0,
+              "deaths": 6,
+              "assists": 19
+            },
+            "gold": 21062
+          },
+          {
+            "nickname": "голос свыше [ATEL]",
+            "hero": "Ember Spirit",
+            "kda": {
+              "kills": 0,
+              "deaths": 6,
+              "assists": 18
+            },
+            "gold": 21999
+          }
+        ]
+      }
+    },
+    {
+      "id": "allseeing-vs-dogs-2",
+      "teams": {
+        "radiant": "Всефидящие",
+        "dire": "Пес Дюк"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "26:58",
+        "duration_seconds": 1618,
+        "score": {
+          "radiant": 11,
+          "dire": 32
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "голос свыше [ATEL]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 0,
+              "deaths": 11,
+              "assists": 5
+            },
+            "gold": 11109
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Slark",
+            "kda": {
+              "kills": 1,
+              "deaths": 7,
+              "assists": 6
+            },
+            "gold": 12532
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Hoodwink",
+            "kda": {
+              "kills": 5,
+              "deaths": 4,
+              "assists": 4
+            },
+            "gold": 15735
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Ursa",
+            "kda": {
+              "kills": 4,
+              "deaths": 6,
+              "assists": 2
+            },
+            "gold": 32134
+          },
+          {
+            "nickname": "@katanaflow",
+            "hero": "Invoker",
+            "kda": {
+              "kills": 1,
+              "deaths": 4,
+              "assists": 5
+            },
+            "gold": 26499
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Keeper of the Light",
+            "kda": {
+              "kills": 8,
+              "deaths": 3,
+              "assists": 15
+            },
+            "gold": 27597
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Bristleback",
+            "kda": {
+              "kills": 3,
+              "deaths": 3,
+              "assists": 22
+            },
+            "gold": 29082
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Void Spirit",
+            "kda": {
+              "kills": 16,
+              "deaths": 2,
+              "assists": 6
+            },
+            "gold": 42832
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Riki",
+            "kda": {
+              "kills": 4,
+              "deaths": 1,
+              "assists": 14
+            },
+            "gold": 19147
+          },
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Jakiro",
+            "kda": {
+              "kills": 0,
+              "deaths": 2,
+              "assists": 23
+            },
+            "gold": 20898
+          }
+        ]
+      }
+    },
+    {
+      "id": "allseeing-vs-dogs-3",
+      "teams": {
+        "radiant": "Пес Дюк",
+        "dire": "Всефидящие"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "58:54",
+        "duration_seconds": 3534,
+        "score": {
+          "radiant": 41,
+          "dire": 35
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Jakiro",
+            "kda": {
+              "kills": 8,
+              "deaths": 11,
+              "assists": 25
+            },
+            "gold": 59501
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Doom",
+            "kda": {
+              "kills": 10,
+              "deaths": 10,
+              "assists": 20
+            },
+            "gold": 64210
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Phantom Lancer",
+            "kda": {
+              "kills": 9,
+              "deaths": 1,
+              "assists": 22
+            },
+            "gold": 105437
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Riki",
+            "kda": {
+              "kills": 6,
+              "deaths": 7,
+              "assists": 17
+            },
+            "gold": 42008
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Earthshaker",
+            "kda": {
+              "kills": 6,
+              "deaths": 6,
+              "assists": 26
+            },
+            "gold": 61369
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "@katanaflow",
+            "hero": "Morphling",
+            "kda": {
+              "kills": 18,
+              "deaths": 0,
+              "assists": 7
+            },
+            "gold": 105535
+          },
+          {
+            "nickname": "qonsth",
+            "hero": "Ursa",
+            "kda": {
+              "kills": 10,
+              "deaths": 11,
+              "assists": 8
+            },
+            "gold": 80281
+          },
+          {
+            "nickname": "HOLO [Bonk]",
+            "hero": "Undying",
+            "kda": {
+              "kills": 2,
+              "deaths": 14,
+              "assists": 14
+            },
+            "gold": 42278
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Kunkka",
+            "kda": {
+              "kills": 4,
+              "deaths": 8,
+              "assists": 21
+            },
+            "gold": 50952
+          },
+          {
+            "nickname": "голос свыше [ATEL]",
+            "hero": "Techies",
+            "kda": {
+              "kills": 1,
+              "deaths": 11,
+              "assists": 12
+            },
+            "gold": 33089
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-j4-1",
+      "teams": {
+        "radiant": "J4",
+        "dire": "Котята"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "33:12",
+        "duration_seconds": 1992,
+        "score": {
+          "radiant": 49,
+          "dire": 26
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "123",
+            "hero": "Tinker",
+            "kda": {
+              "kills": 24,
+              "deaths": 6,
+              "assists": 12
+            },
+            "gold": 49179
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Spirit Breaker",
+            "kda": {
+              "kills": 5,
+              "deaths": 4,
+              "assists": 29
+            },
+            "gold": 26662
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 9,
+              "deaths": 5,
+              "assists": 15
+            },
+            "gold": 41500
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Grimstroke",
+            "kda": {
+              "kills": 10,
+              "deaths": 4,
+              "assists": 30
+            },
+            "gold": 34860
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Tidehunter",
+            "kda": {
+              "kills": 1,
+              "deaths": 7,
+              "assists": 19
+            },
+            "gold": 20296
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "epremches",
+            "hero": "Medusa",
+            "kda": {
+              "kills": 2,
+              "deaths": 6,
+              "assists": 16
+            },
+            "gold": 31572
+          },
+          {
+            "nickname": "антон [антон]",
+            "hero": "Bristleback",
+            "kda": {
+              "kills": 2,
+              "deaths": 11,
+              "assists": 22
+            },
+            "gold": 27069
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 11,
+              "deaths": 11,
+              "assists": 7
+            },
+            "gold": 36002
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Necrophos",
+            "kda": {
+              "kills": 3,
+              "deaths": 13,
+              "assists": 19
+            },
+            "gold": 27408
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 8,
+              "deaths": 8,
+              "assists": 10
+            },
+            "gold": 25573
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-j4-2",
+      "teams": {
+        "radiant": "Котята",
+        "dire": "J4"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "20:11",
+        "duration_seconds": 1211,
+        "score": {
+          "radiant": 17,
+          "dire": 32
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Chop Chop",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 5,
+              "deaths": 10,
+              "assists": 8
+            },
+            "gold": 15171
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Sven",
+            "kda": {
+              "kills": 4,
+              "deaths": 6,
+              "assists": 5
+            },
+            "gold": 20769
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Weaver",
+            "kda": {
+              "kills": 1,
+              "deaths": 6,
+              "assists": 8
+            },
+            "gold": 10508
+          },
+          {
+            "nickname": "антон [антон]",
+            "hero": "Axe",
+            "kda": {
+              "kills": 5,
+              "deaths": 7,
+              "assists": 6
+            },
+            "gold": 12978
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 2,
+              "deaths": 3,
+              "assists": 6
+            },
+            "gold": 8545
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "123",
+            "hero": "Necrophos",
+            "kda": {
+              "kills": 17,
+              "deaths": 2,
+              "assists": 7
+            },
+            "gold": 38092
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 9,
+              "deaths": 4,
+              "assists": 6
+            },
+            "gold": 28355
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Spirit Breaker",
+            "kda": {
+              "kills": 2,
+              "deaths": 4,
+              "assists": 20
+            },
+            "gold": 16113
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Tidehunter",
+            "kda": {
+              "kills": 2,
+              "deaths": 2,
+              "assists": 11
+            },
+            "gold": 16538
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Grimstroke",
+            "kda": {
+              "kills": 2,
+              "deaths": 5,
+              "assists": 24
+            },
+            "gold": 19543
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-j4-3",
+      "teams": {
+        "radiant": "J4",
+        "dire": "Котята"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "27:03",
+        "duration_seconds": 1623,
+        "score": {
+          "radiant": 45,
+          "dire": 20
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "123",
+            "hero": "Storm Spirit",
+            "kda": {
+              "kills": 10,
+              "deaths": 5,
+              "assists": 19
+            },
+            "gold": 37296
+          },
+          {
+            "nickname": "Устал тащить",
+            "hero": "Witch Doctor",
+            "kda": {
+              "kills": 10,
+              "deaths": 4,
+              "assists": 19
+            },
+            "gold": 27181
+          },
+          {
+            "nickname": "Mc_KFC",
+            "hero": "Undying",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 16
+            },
+            "gold": 23813
+          },
+          {
+            "nickname": "maxemot [PRMIR]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 11,
+              "deaths": 1,
+              "assists": 8
+            },
+            "gold": 42943
+          },
+          {
+            "nickname": "местная табуретка",
+            "hero": "Snapfire",
+            "kda": {
+              "kills": 11,
+              "deaths": 3,
+              "assists": 19
+            },
+            "gold": 30357
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "epremches",
+            "hero": "Luna",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 6
+            },
+            "gold": 24385
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Invoker",
+            "kda": {
+              "kills": 8,
+              "deaths": 8,
+              "assists": 8
+            },
+            "gold": 21909
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 4,
+              "deaths": 7,
+              "assists": 4
+            },
+            "gold": 11811
+          },
+          {
+            "nickname": "антон [антон]",
+            "hero": "Axe",
+            "kda": {
+              "kills": 1,
+              "deaths": 12,
+              "assists": 10
+            },
+            "gold": 13152
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 3,
+              "deaths": 11,
+              "assists": 9
+            },
+            "gold": 27092
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-dogs-1",
+      "teams": {
+        "radiant": "Котята",
+        "dire": "Пес Дюк"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "21:02",
+        "duration_seconds": 1262,
+        "score": {
+          "radiant": 0,
+          "dire": 39
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Necrophos",
+            "kda": {
+              "kills": 0,
+              "deaths": 17,
+              "assists": 0
+            },
+            "gold": 15066
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 0,
+              "deaths": 10,
+              "assists": 0
+            },
+            "gold": 5743
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Axe",
+            "kda": {
+              "kills": 0,
+              "deaths": 8,
+              "assists": 0
+            },
+            "gold": 9810
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 0,
+              "deaths": 7,
+              "assists": 0
+            },
+            "gold": 14607
+          },
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Spirit Breaker",
+            "kda": {
+              "kills": 0,
+              "deaths": 7,
+              "assists": 0
+            },
+            "gold": 9291
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Winter Wyvern",
+            "kda": {
+              "kills": 9,
+              "deaths": 0,
+              "assists": 17
+            },
+            "gold": 24063
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Magnus",
+            "kda": {
+              "kills": 2,
+              "deaths": 0,
+              "assists": 17
+            },
+            "gold": 18138
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 14,
+              "deaths": 0,
+              "assists": 10
+            },
+            "gold": 32271
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Rubick",
+            "kda": {
+              "kills": 10,
+              "deaths": 0,
+              "assists": 10
+            },
+            "gold": 20805
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Chaos Knight",
+            "kda": {
+              "kills": 4,
+              "deaths": 0,
+              "assists": 14
+            },
+            "gold": 21455
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-dogs-2",
+      "teams": {
+        "radiant": "Пес Дюк",
+        "dire": "Котята"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "34:43",
+        "duration_seconds": 2083,
+        "score": {
+          "radiant": 36,
+          "dire": 20
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Winter Wyvern",
+            "kda": {
+              "kills": 10,
+              "deaths": 6,
+              "assists": 22
+            },
+            "gold": 38256
+          },
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Chaos Knight",
+            "kda": {
+              "kills": 7,
+              "deaths": 2,
+              "assists": 11
+            },
+            "gold": 39259
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Earthshaker",
+            "kda": {
+              "kills": 2,
+              "deaths": 6,
+              "assists": 21
+            },
+            "gold": 37719
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Spectre",
+            "kda": {
+              "kills": 10,
+              "deaths": 3,
+              "assists": 18
+            },
+            "gold": 45800
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Rubick",
+            "kda": {
+              "kills": 7,
+              "deaths": 3,
+              "assists": 22
+            },
+            "gold": 39437
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Mars",
+            "kda": {
+              "kills": 3,
+              "deaths": 8,
+              "assists": 9
+            },
+            "gold": 26380
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Medusa",
+            "kda": {
+              "kills": 2,
+              "deaths": 6,
+              "assists": 4
+            },
+            "gold": 41674
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 3,
+              "deaths": 6,
+              "assists": 8
+            },
+            "gold": 13826
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Snapfire",
+            "kda": {
+              "kills": 7,
+              "deaths": 9,
+              "assists": 10
+            },
+            "gold": 25109
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Viper",
+            "kda": {
+              "kills": 5,
+              "deaths": 7,
+              "assists": 9
+            },
+            "gold": 25103
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-dogs-3",
+      "teams": {
+        "radiant": "Котята",
+        "dire": "Пес Дюк"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "19:14",
+        "duration_seconds": 1154,
+        "score": {
+          "radiant": 15,
+          "dire": 32
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Slardar",
+            "kda": {
+              "kills": 4,
+              "deaths": 5,
+              "assists": 4
+            },
+            "gold": 14954
+          },
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Doom",
+            "kda": {
+              "kills": 4,
+              "deaths": 6,
+              "assists": 7
+            },
+            "gold": 17282
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 2,
+              "deaths": 5,
+              "assists": 3
+            },
+            "gold": 9203
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Lion",
+            "kda": {
+              "kills": 3,
+              "deaths": 9,
+              "assists": 4
+            },
+            "gold": 8430
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 1,
+              "deaths": 7,
+              "assists": 4
+            },
+            "gold": 12824
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "Chief Penetrator [PRMIR]",
+            "hero": "Chaos Knight",
+            "kda": {
+              "kills": 8,
+              "deaths": 2,
+              "assists": 7
+            },
+            "gold": 21311
+          },
+          {
+            "nickname": "ZED [РАЙ]",
+            "hero": "Phantom Assassin",
+            "kda": {
+              "kills": 11,
+              "deaths": 3,
+              "assists": 11
+            },
+            "gold": 25363
+          },
+          {
+            "nickname": "DAI MNE SILU",
+            "hero": "Magnus",
+            "kda": {
+              "kills": 3,
+              "deaths": 3,
+              "assists": 16
+            },
+            "gold": 18556
+          },
+          {
+            "nickname": "Магистр стиралки [ПЫЛ]",
+            "hero": "Winter Wyvern",
+            "kda": {
+              "kills": 6,
+              "deaths": 4,
+              "assists": 14
+            },
+            "gold": 17116
+          },
+          {
+            "nickname": "ЖЕНЯ ДАНЖЕР",
+            "hero": "Rubick",
+            "kda": {
+              "kills": 4,
+              "deaths": 3,
+              "assists": 18
+            },
+            "gold": 16438
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-otodraniki-1",
+      "teams": {
+        "radiant": "Котята",
+        "dire": "Отодраники"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "24:00",
+        "duration_seconds": 1440,
+        "score": {
+          "radiant": 34,
+          "dire": 23
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Chop Chop",
+            "hero": "Sniper",
+            "kda": {
+              "kills": 7,
+              "deaths": 4,
+              "assists": 19
+            },
+            "gold": 31344
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Viper",
+            "kda": {
+              "kills": 11,
+              "deaths": 6,
+              "assists": 17
+            },
+            "gold": 29440
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Axe",
+            "kda": {
+              "kills": 6,
+              "deaths": 5,
+              "assists": 11
+            },
+            "gold": 23069
+          },
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Magnus",
+            "kda": {
+              "kills": 4,
+              "deaths": 3,
+              "assists": 24
+            },
+            "gold": 21425
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 6,
+              "deaths": 5,
+              "assists": 6
+            },
+            "gold": 16820
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "RUSSIAN VODKA",
+            "hero": "Death Prophet",
+            "kda": {
+              "kills": 7,
+              "deaths": 4,
+              "assists": 2
+            },
+            "gold": 22980
+          },
+          {
+            "nickname": "4AIHUK",
+            "hero": "Clockwerk",
+            "kda": {
+              "kills": 3,
+              "deaths": 9,
+              "assists": 10
+            },
+            "gold": 15384
+          },
+          {
+            "nickname": "Чепуха",
+            "hero": "Kez",
+            "kda": {
+              "kills": 8,
+              "deaths": 7,
+              "assists": 4
+            },
+            "gold": 21331
+          },
+          {
+            "nickname": "Дима лучший Батон [#414A]",
+            "hero": "Bane",
+            "kda": {
+              "kills": 1,
+              "deaths": 8,
+              "assists": 13
+            },
+            "gold": 11651
+          },
+          {
+            "nickname": "VATRUWKA [PRMIR]",
+            "hero": "Drow Ranger",
+            "kda": {
+              "kills": 4,
+              "deaths": 6,
+              "assists": 8
+            },
+            "gold": 21656
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-otodraniki-2",
+      "teams": {
+        "radiant": "Отодраники",
+        "dire": "Котята"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "30:34",
+        "duration_seconds": 1834,
+        "score": {
+          "radiant": 37,
+          "dire": 36
+        },
+        "winner": "Dire"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Дима лучший Батон [#414A]",
+            "hero": "Bane",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 21
+            },
+            "gold": 16674
+          },
+          {
+            "nickname": "4AIHUK",
+            "hero": "Ogre Magi",
+            "kda": {
+              "kills": 1,
+              "deaths": 9,
+              "assists": 17
+            },
+            "gold": 24443
+          },
+          {
+            "nickname": "RUSSIAN VODKA",
+            "hero": "Axe",
+            "kda": {
+              "kills": 2,
+              "deaths": 8,
+              "assists": 17
+            },
+            "gold": 24610
+          },
+          {
+            "nickname": "Чепуха",
+            "hero": "Kez",
+            "kda": {
+              "kills": 23,
+              "deaths": 5,
+              "assists": 3
+            },
+            "gold": 42896
+          },
+          {
+            "nickname": "VATRUWKA [PRMIR]",
+            "hero": "Juggernaut",
+            "kda": {
+              "kills": 7,
+              "deaths": 7,
+              "assists": 15
+            },
+            "gold": 36943
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "epremches",
+            "hero": "Centaur Warrunner",
+            "kda": {
+              "kills": 4,
+              "deaths": 11,
+              "assists": 21
+            },
+            "gold": 27620
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 3,
+              "deaths": 7,
+              "assists": 14
+            },
+            "gold": 19964
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Invoker",
+            "kda": {
+              "kills": 9,
+              "deaths": 5,
+              "assists": 19
+            },
+            "gold": 37610
+          },
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Magnus",
+            "kda": {
+              "kills": 0,
+              "deaths": 8,
+              "assists": 32
+            },
+            "gold": 24000
+          },
+          {
+            "nickname": "Chop Chop",
+            "hero": "Drow Ranger",
+            "kda": {
+              "kills": 19,
+              "deaths": 6,
+              "assists": 12
+            },
+            "gold": 46836
+          }
+        ]
+      }
+    },
+    {
+      "id": "kittens-vs-otodraniki-3",
+      "teams": {
+        "radiant": "Котята",
+        "dire": "Отодраники"
+      },
+      "game": {
+        "mode": "Turbo",
+        "duration": "25:08",
+        "duration_seconds": 1508,
+        "score": {
+          "radiant": 29,
+          "dire": 28
+        },
+        "winner": "Radiant"
+      },
+      "players": {
+        "radiant": [
+          {
+            "nickname": "Chop Chop",
+            "hero": "Drow Ranger",
+            "kda": {
+              "kills": 6,
+              "deaths": 5,
+              "assists": 15
+            },
+            "gold": 29090
+          },
+          {
+            "nickname": "eclipse [-Arma]",
+            "hero": "Marci",
+            "kda": {
+              "kills": 3,
+              "deaths": 6,
+              "assists": 17
+            },
+            "gold": 17817
+          },
+          {
+            "nickname": "головорез97 [NGR0d]",
+            "hero": "Viper",
+            "kda": {
+              "kills": 10,
+              "deaths": 4,
+              "assists": 11
+            },
+            "gold": 26682
+          },
+          {
+            "nickname": "epremches",
+            "hero": "Axe",
+            "kda": {
+              "kills": 7,
+              "deaths": 9,
+              "assists": 7
+            },
+            "gold": 21537
+          },
+          {
+            "nickname": "anitkacs [PRMIR]",
+            "hero": "Lich",
+            "kda": {
+              "kills": 2,
+              "deaths": 4,
+              "assists": 7
+            },
+            "gold": 14135
+          }
+        ],
+        "dire": [
+          {
+            "nickname": "VATRUWKA [PRMIR]",
+            "hero": "Windranger",
+            "kda": {
+              "kills": 7,
+              "deaths": 5,
+              "assists": 3
+            },
+            "gold": 20811
+          },
+          {
+            "nickname": "4AIHUK",
+            "hero": "Lion",
+            "kda": {
+              "kills": 1,
+              "deaths": 8,
+              "assists": 8
+            },
+            "gold": 12823
+          },
+          {
+            "nickname": "Чепуха",
+            "hero": "Spectre",
+            "kda": {
+              "kills": 11,
+              "deaths": 4,
+              "assists": 10
+            },
+            "gold": 31626
+          },
+          {
+            "nickname": "Дима лучший Батон [#414A]",
+            "hero": "Tusk",
+            "kda": {
+              "kills": 3,
+              "deaths": 6,
+              "assists": 22
+            },
+            "gold": 20417
+          },
+          {
+            "nickname": "RUSSIAN VODKA",
+            "hero": "Death Prophet",
+            "kda": {
+              "kills": 4,
+              "deaths": 7,
+              "assists": 7
+            },
+            "gold": 21316
+          }
         ]
       }
     }
