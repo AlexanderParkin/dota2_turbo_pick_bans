@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "games": [
+    {
+      "id": "kittens-vs-dogs-1",
+      "teams": { "radiant": "Котята", "dire": "Пес Дюк" },
+      "game": { "mode": "Turbo", "duration": "21:02", "duration_seconds": 1262, "score": { "radiant": 0, "dire": 39 }, "winner": "Dire" },
+      "players": {
+        "radiant": [
+          { "nickname": "головорез97 [NGR0d]", "hero": "Necrophos", "kda": { "kills": 0, "deaths": 17, "assists": 0 }, "gold": 15066 },
+          { "nickname": "anitkacs [PRMIR]", "hero": "Lich", "kda": { "kills": 0, "deaths": 10, "assists": 0 }, "gold": 5743 },
+          { "nickname": "epremches", "hero": "Axe", "kda": { "kills": 0, "deaths": 8, "assists": 0 }, "gold": 9810 },
+          { "nickname": "Chop Chop", "hero": "Sniper", "kda": { "kills": 0, "deaths": 7, "assists": 0 }, "gold": 14607 },
+          { "nickname": "eclipse [-Arma]", "hero": "Spirit Breaker", "kda": { "kills": 0, "deaths": 7, "assists": 0 }, "gold": 9291 }
+        ],
+        "dire": [
+          { "nickname": "Магистр стиралки [ПЫЛ]", "hero": "Winter Wyvern", "kda": { "kills": 9, "deaths": 0, "assists": 17 }, "gold": 24063 },
+          { "nickname": "DAI MNE SILU", "hero": "Magnus", "kda": { "kills": 2, "deaths": 0, "assists": 17 }, "gold": 18138 },
+          { "nickname": "ZED [РАЙ]", "hero": "Phantom Assassin", "kda": { "kills": 14, "deaths": 0, "assists": 10 }, "gold": 32271 },
+          { "nickname": "ЖЕНЯ ДАНЖЕР", "hero": "Rubick", "kda": { "kills": 10, "deaths": 0, "assists": 10 }, "gold": 20805 },
+          { "nickname": "Chief Penetrator [PRMIR]", "hero": "Chaos Knight", "kda": { "kills": 4, "deaths": 0, "assists": 14 }, "gold": 21455 }
+        ]
+      }
+    }
+  ]
+}
