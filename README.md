@@ -29,6 +29,11 @@
 В каждом матче записаны стороны, счёт, длительность, победитель и десять игроков с героем,
 K/D/A и золотом. Пересобрать JSON и проверить полноту данных можно командой:
 
+- `tournament-100-sinners.html` — таблица серий, матрица встреч и статистика героев;
+- `tournament-team.html?team=<team-id>` — страница команды;
+- `tournament-series.html?a=<team-id>&b=<team-id>` — страница серии;
+- `tournament-match.html?id=<match-id>` — подробности матча.
+
 ```bash
 python3 scripts/build_tournament_games.py
 ```
